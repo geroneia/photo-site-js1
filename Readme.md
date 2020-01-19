@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Кристина Вуйчич](https://up.htmlacademy.ru/javascript/19/user/996317).
-* Наставник: `Алексей Белявский`.
+* Наставник: [Алексей Белявский](https://htmlacademy.ru/profile/id666435).
 
 ---
 

@@ -177,8 +177,7 @@ var photos = [
     likes: getRandomInteger(15, 200),
     comments: getCommentsArray()
   }
-]
-console.log(photos);
+];
 
 // здесь я пробовала через функцию делать формирование массива фоток и потом применять ее, но что-то пошло не так
 // var getPhotosArray = function () {

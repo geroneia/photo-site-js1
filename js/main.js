@@ -1,204 +1,51 @@
 'use strict';
+var MIN_COMMENTS = 1;
+var MAX_COMMENTS = 5;
+var MIN_AVATAR_IMG = 1;
+var MAX_AVATAR_IMG = 6;
+var MIN_LIKES = 15;
+var MAX_LIKES = 200;
+var MIN_PHOTOS = 1;
+var PHOTOS_COUNT = 25;
+
 // Находит место, куда вставятся фотки
 var anotherUserPictures = document.querySelector('.pictures');
 // Находит шаблон
 var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
-var messages = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?! '];
+var messages = [
+  'Всё отлично!',
+  'В целом всё неплохо. Но не всё.',
+  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
+  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
+  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
+  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?! '
+];
 var authorNames = ['Талита', 'Сури', 'Кузя', 'Киви', 'Горошина', 'Дара'];
-// Получает случайное число. Как сделать так, чтобы числа не повторялись?
+
+// Получает случайное число.
 var getRandomInteger = function (min, max) {
   var number = min + Math.random() * (max - min);
   return Math.floor(number);
 };
 
 // Формирует массив из комментариев к фоткам
-var getCommentsArray = function () {
-  var commentsArray = [];
-  for (var i = 0; i < getRandomInteger(1, 5); i++) {
+var getComments = function () {
+  var comments = [];
+  for (var i = 0; i < getRandomInteger(MIN_COMMENTS, MAX_COMMENTS); i++) {
     var comment = {};
-    comment['avatar'] = 'img/avatar-' + getRandomInteger(1, 6) + '.svg';
+    comment['avatar'] = 'img/avatar-' + getRandomInteger(MIN_AVATAR_IMG, MAX_AVATAR_IMG) + '.svg';
     comment['message'] = messages[getRandomInteger(0, messages.length - 1)];
     comment['name'] = authorNames[getRandomInteger(0, authorNames.length - 1)];
-    commentsArray.push(comment);
+    comments.push(comment);
   }
-  return commentsArray;
+  return comments;
 };
-// console.log(getCommentsArray());
-
-var photos = [
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  },
-  {
-    url: 'photos/' + getRandomInteger(1, 25) + '.jpg',
-    description: '',
-    likes: getRandomInteger(15, 200),
-    comments: getCommentsArray()
-  }
-];
-
-// здесь я пробовала через функцию делать формирование массива фоток и потом применять ее, но что-то пошло не так
-// var getPhotosArray = function () {
-//   var photosArray = [];
-//   for (var i = 0; i < 25; i++) {
-//     var photo = {};
-//     photo['url'] = 'photos/' + getRandomInteger(1, 25) + '.jpg';
-//     photo['description'] = '';
-//     photo['likes'] = getRandomInteger(15, 200);
-//     photo['comments'] = getCommentsArray();
-//     console.log(photo);
-//     photosArray.push(photo);
-//   }
-//   return photosArray;
-// };
-// console.log(getPhotosArray());
-
 
 // Собирает шаблон картинки с данными
 var getPicture = function (picture) {
-// клонирует шаблон
+
+  // клонирует шаблон
   var userPhoto = pictureTemplate.cloneNode(true);
 
   userPhoto.querySelector('.picture__img').src = picture.url;
@@ -209,10 +56,14 @@ var getPicture = function (picture) {
 
 // Создает фрагмент
 var fragment = document.createDocumentFragment();
-for (var j = 0; j < photos.length; j++) {
-  fragment.appendChild(getPicture(photos[j]));
+for (var j = 0; j < PHOTOS_COUNT; j++) {
+  var photo = {
+    url: 'photos/' + getRandomInteger(MIN_PHOTOS, PHOTOS_COUNT) + '.jpg',
+    description: '',
+    likes: getRandomInteger(MIN_LIKES, MAX_LIKES),
+    comments: getComments()
+  };
+  fragment.appendChild(getPicture(photo));
 }
 // добавляет шаблон в отведенное место
 anotherUserPictures.appendChild(fragment);
-
-

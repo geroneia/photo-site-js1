@@ -29,6 +29,12 @@ var getRandomInteger = function (min, max) {
   return Math.floor(number);
 };
 
+
+var getCommentLayout = function (comment) {
+  var commentLayout = '<li class="social__comment"><img class="social__picture" src="' + comment.avatar + '"alt="' + comment.name + '"width="35" height="35"><p class="social__text">' + comment.message + '</p></li>';
+  return commentLayout;
+};
+
 // Формирует массив из комментариев к фоткам
 var getComments = function () {
   var comments = [];
@@ -37,6 +43,7 @@ var getComments = function () {
     comment['avatar'] = 'img/avatar-' + getRandomInteger(MIN_AVATAR_IMG_COUNT, MAX_AVATAR_IMG_COUNT) + '.svg';
     comment['message'] = messages[getRandomInteger(0, messages.length - 1)];
     comment['name'] = authorNames[getRandomInteger(0, authorNames.length - 1)];
+    comment['layout'] = getCommentLayout(comment);
     comments.push(comment);
   }
   return comments;
@@ -53,6 +60,19 @@ var getPicture = function (picture) {
   return userPhoto;
 };
 
+// Находит и отображает блок с полноэкранным показом изображений
+var bigPicture = document.querySelector('.big-picture');
+bigPicture.classList.remove('hidden');
+// Заполняет блок данными из объекта photo
+var getBigPicture = function (picture) {
+  bigPicture.querySelector('.big-picture__img').src = picture.url;
+  bigPicture.querySelector('.likes-count').textContent = picture.likes;
+  bigPicture.querySelector('.comments-count').textContent = picture.comments.length;
+  bigPicture.querySelector('.social__comments').innerHTML = picture.comments[0].layout;
+  bigPicture.querySelector('.social__caption').textContent = '';
+  return bigPicture;
+};
+
 // Создает фрагмент
 var fragment = document.createDocumentFragment();
 for (var j = 0; j < PHOTOS_COUNT; j++) {
@@ -63,6 +83,16 @@ for (var j = 0; j < PHOTOS_COUNT; j++) {
     comments: getComments()
   };
   fragment.appendChild(getPicture(photo));
+  getBigPicture(photo);
 }
 // добавляет шаблон в отведенное место
 anotherUserPictures.appendChild(fragment);
+
+// Прячет блоки счетчиа и загрузки комментов
+var commentsCounter = document.querySelector('.social__comment-count');
+commentsCounter.classList.add('hidden');
+var commentsLoader = document.querySelector('.comments-loader');
+commentsLoader.classList.add('hidden');
+// Запрещает прокрутку экрана при открытом модальном окне
+var body = document.querySelector('body');
+body.classList.add('modal-open');

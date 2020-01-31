@@ -29,9 +29,10 @@ var getRandomInteger = function (min, max) {
   return Math.floor(number);
 };
 
-
 var getCommentLayout = function (comment) {
-  var commentLayout = '<li class="social__comment"><img class="social__picture" src="' + comment.avatar + '"alt="' + comment.name + '"width="35" height="35"><p class="social__text">' + comment.message + '</p></li>';
+  var imgLayout = '<img class="social__picture" src="' + comment.avatar + '"alt="' + comment.name + '"width="35" height="35"></img>';
+  var commentTextLayout = '<p class="social__text">' + comment.message + '</p></li>';
+  var commentLayout = '<li class="social__comment">' + imgLayout + commentTextLayout;
   return commentLayout;
 };
 
@@ -50,7 +51,7 @@ var getComments = function () {
 };
 
 var getAllCommentsLayout = function () {
-  var allCommentLayout;
+  var allCommentLayout = '';
   var comments = getComments();
   for (var i = 0; i < comments.length; i++) {
     allCommentLayout += comments[i].layout;
@@ -74,7 +75,7 @@ var bigPicture = document.querySelector('.big-picture');
 bigPicture.classList.remove('hidden');
 // Заполняет блок данными из объекта photo
 var getBigPicture = function (picture) {
-  bigPicture.querySelector('.big-picture__img').src = picture.url;
+  bigPicture.querySelector('.big-picture__img').innerHTML = '<img src="' + picture.url + '" alt="" width="600" height="600">';
   bigPicture.querySelector('.likes-count').textContent = picture.likes;
   bigPicture.querySelector('.comments-count').textContent = picture.comments.length;
   bigPicture.querySelector('.social__comments').innerHTML = getAllCommentsLayout();

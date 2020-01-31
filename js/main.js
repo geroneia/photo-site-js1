@@ -49,6 +49,15 @@ var getComments = function () {
   return comments;
 };
 
+var getAllCommentsLayout = function () {
+  var allCommentLayout;
+  var comments = getComments();
+  for (var i = 0; i < comments.length; i++) {
+    allCommentLayout += comments[i].layout;
+  }
+  return allCommentLayout;
+};
+
 // Собирает шаблон картинки с данными
 var getPicture = function (picture) {
   // клонирует шаблон
@@ -68,7 +77,7 @@ var getBigPicture = function (picture) {
   bigPicture.querySelector('.big-picture__img').src = picture.url;
   bigPicture.querySelector('.likes-count').textContent = picture.likes;
   bigPicture.querySelector('.comments-count').textContent = picture.comments.length;
-  bigPicture.querySelector('.social__comments').innerHTML = picture.comments[0].layout;
+  bigPicture.querySelector('.social__comments').innerHTML = getAllCommentsLayout();
   bigPicture.querySelector('.social__caption').textContent = '';
   return bigPicture;
 };

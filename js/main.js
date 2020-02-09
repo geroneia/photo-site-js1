@@ -124,6 +124,7 @@ var applyEffect = function () {
   var pin = document.querySelector('.effect-level__pin');
   effectLevelScale.classList.add('hidden');
   var START_VALUE = 100;
+
   // Описывает изменение насыщенности с помощью бегунка
   var effectLevelValue = document.querySelector('.effect-level__value');
 
@@ -142,7 +143,8 @@ var applyEffect = function () {
       imgUploadPreview.style.filter = '';
     }
   };
-  pin.addEventListener('mouseup', function (evt) {
+  // Тут будет считаться положение пина и заполняться value, но перетаскивание - это следующая тема, и я пока не делала
+  pin.addEventListener('mouseup', function () {
     var changedValue = effectLevelValue.value;
     applyEffectDepth(changedValue);
   });
@@ -176,7 +178,12 @@ var uploadFile = document.querySelector('#upload-file');
 var imgUploadOverlay = document.querySelector('.img-upload__overlay');
 var imgUploadCancel = document.querySelector('#upload-cancel');
 var value = uploadFile.value;
+var hashtagsInput = document.querySelector('.text__hashtags');
 var ESC_KEY = 'Escape';
+var MIN_HASHTAG_LENGTH = 2;
+var MAX_HASHTAG_LENGTH = 20;
+var MAX_HASHYAG_COUNT = 5;
+var DELIM = ', ';
 var onEscPress = function (evt) {
   if (evt.key === ESC_KEY) {
     closeImgUpload();
@@ -186,6 +193,12 @@ var onEscPress = function (evt) {
 var openImgUpload = function () {
   imgUploadOverlay.classList.remove('hidden');
   document.addEventListener('keydown', onEscPress);
+  hashtagsInput.addEventListener('focus', function () {
+    document.removeEventListener('keydown', onEscPress);
+  });
+  hashtagsInput.addEventListener('blur', function () {
+    document.addEventListener('keydown', onEscPress);
+  });
   body.classList.add('modal-open');
 };
 
@@ -205,4 +218,46 @@ imgUploadCancel.addEventListener('click', function () {
   closeImgUpload();
 });
 
+// Производит валидацию хэштегов
+// Проверка слов
+var findWrongWord = function (target, tag) {
+  if (tag.match(/\W/g)) {
+    target.setCustomValidity(
+        'Хэш-тег должен состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т.п.), символы пунктуации (тире, дефис, запятая и т.п.), эмодзи и т.д.'
+    );
+  } else if (tag.length < MIN_HASHTAG_LENGTH) {
+    target.setCustomValidity(
+        'Минимальная длина хэш-тега ' + MIN_HASHTAG_LENGTH + ' символов, включая решётку'
+    );
+  } else if (tag.length > MAX_HASHTAG_LENGTH) {
+    target.setCustomValidity(
+        'Максимальная длина хэш-тега ' + MAX_HASHTAG_LENGTH + ' символов, включая решётку'
+    );
+  } else {
+    target.setCustomValidity('');
+  }
+};
 
+hashtagsInput.addEventListener('input', function (evt) {
+  var target = evt.target;
+  var tags = target.value.split([DELIM]);
+  if (tags.length > MAX_HASHYAG_COUNT) {
+    target.setCustomValidity(
+        'Нельзя указать больше ' + MAX_HASHYAG_COUNT + '-ти хэш-тегов'
+    );
+  }
+  var tag = '';
+  for (var i = 0; i < tags.length; i++) {
+    tag = tags[i];
+
+
+    var letters = tag.split(['']);
+    if (letters[0] !== '#') {
+      target.setCustomValidity(
+          'Хэш-тег должен начинаеться с символа # (решётка)'
+      );
+    } else {
+      findWrongWord(target, tag);
+    }
+  }
+});

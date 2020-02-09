@@ -72,7 +72,7 @@ var getPicture = function (picture) {
 
 // Находит и отображает блок с полноэкранным показом изображений
 var bigPicture = document.querySelector('.big-picture');
-bigPicture.classList.remove('hidden');
+// bigPicture.classList.remove('hidden');
 // Заполняет блок данными из объекта photo
 var getBigPicture = function (picture) {
   bigPicture.querySelector('.big-picture__img img').src = picture.url;
@@ -105,4 +105,104 @@ var commentsLoader = document.querySelector('.comments-loader');
 commentsLoader.classList.add('hidden');
 // Запрещает прокрутку экрана при открытом модальном окне
 var body = document.querySelector('body');
-body.classList.add('modal-open');
+// body.classList.add('modal-open');
+
+var applyEffect = function () {
+  // Применяет эффект для изображения
+// Находит радио-кнопки
+  var effectsRadios = document.querySelectorAll('.effects__radio');
+  // Находит превью картинки
+  var effectsPreviews = document.querySelectorAll('.effects__preview');
+  // Создает названия классов, которые применятся к картинке
+  var effectsNames = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
+  var addedEffectClass = 'effects__preview--';
+  // Находит картинку, к которой нужно применить эффект
+  var imgUploadPreview = document.querySelector('.img-upload__preview img');
+  // Находит слайдер
+  var effectLevelScale = document.querySelector('.img-upload__effect-level');
+  // Находит пин
+  var pin = document.querySelector('.effect-level__pin');
+  effectLevelScale.classList.add('hidden');
+  var START_VALUE = 100;
+  // Описывает изменение насыщенности с помощью бегунка
+  var effectLevelValue = document.querySelector('.effect-level__value');
+
+  var applyEffectDepth = function (value) {
+    if (imgUploadPreview.classList.contains('effects__preview--chrome')) {
+      imgUploadPreview.style.filter = 'grayscale(' + 1 / 100 * value + ')';
+    } else if (imgUploadPreview.classList.contains('effects__preview--sepia')) {
+      imgUploadPreview.style.filter = 'sepia(' + 1 / 100 * value + ')';
+    } else if (imgUploadPreview.classList.contains('effects__preview--marvin')) {
+      imgUploadPreview.style.filter = 'invert(' + value + '%)';
+    } else if (imgUploadPreview.classList.contains('effects__preview--phobos')) {
+      imgUploadPreview.style.filter = 'blur(' + 3 / 100 * value + 'px)';
+    } else if (imgUploadPreview.classList.contains('effects__preview--heat')) {
+      imgUploadPreview.style.filter = 'brightness(' + 3 / 100 * value + ')';
+    } else {
+      imgUploadPreview.style.filter = '';
+    }
+  };
+  pin.addEventListener('mouseup', function (evt) {
+    var changedValue = effectLevelValue.value;
+    applyEffectDepth(changedValue);
+  });
+  // Перебирает псевдомассив превью картинок
+  var changeEffect = function (effectPreview, addedClass, effectsRadio) {
+    effectPreview.addEventListener('click', function () {
+      for (var k = 0; k < effectsRadios.length; k++) {
+        if (effectsRadios[k].checked) {
+          effectsRadios[k].checked = false;
+        }
+      }
+      effectsRadio.checked = true;
+      if (effectsRadio.value !== 'none') {
+        effectLevelScale.classList.remove('hidden');
+      } else {
+        effectLevelScale.classList.add('hidden');
+      }
+      imgUploadPreview.removeAttribute('class');
+      imgUploadPreview.classList.add(addedClass);
+      applyEffectDepth(START_VALUE);
+    });
+  };
+
+  for (var i = 0; i < effectsPreviews.length; i++) {
+    changeEffect(effectsPreviews[i], addedEffectClass + effectsNames[i], effectsRadios[i]);
+  }
+};
+
+// Показывает форму редактироваия изображения
+var uploadFile = document.querySelector('#upload-file');
+var imgUploadOverlay = document.querySelector('.img-upload__overlay');
+var imgUploadCancel = document.querySelector('#upload-cancel');
+var value = uploadFile.value;
+var ESC_KEY = 'Escape';
+var onEscPress = function (evt) {
+  if (evt.key === ESC_KEY) {
+    closeImgUpload();
+  }
+};
+
+var openImgUpload = function () {
+  imgUploadOverlay.classList.remove('hidden');
+  document.addEventListener('keydown', onEscPress);
+  body.classList.add('modal-open');
+};
+
+var closeImgUpload = function () {
+  imgUploadOverlay.classList.add('hidden');
+  document.removeEventListener('keydown', onEscPress);
+  body.classList.remove('modal-open');
+};
+
+uploadFile.addEventListener('change', function () {
+  if (value !== uploadFile.value) {
+    openImgUpload();
+    applyEffect();
+  }
+});
+imgUploadCancel.addEventListener('click', function () {
+  closeImgUpload();
+});
+
+

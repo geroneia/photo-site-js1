@@ -183,7 +183,7 @@ var ESC_KEY = 'Escape';
 var MIN_HASHTAG_LENGTH = 2;
 var MAX_HASHTAG_LENGTH = 20;
 var MAX_HASHYAG_COUNT = 5;
-var DELIM = ', ';
+var DELIM = ' ';
 var onEscPress = function (evt) {
   if (evt.key === ESC_KEY) {
     closeImgUpload();
@@ -238,6 +238,25 @@ var findWrongWord = function (target, tag) {
   }
 };
 
+// Ищет одинаковые теги
+var getDoubles = function (words, target) {
+  var results = [];
+  for (var i = 0; i < words.length; i++) {
+    var firstWord = words[i];
+    for (var k = i + 1; k < words.length; k++) {
+      var secondWord = words[k];
+      if (firstWord.toLowerCase() === secondWord.toLowerCase()) {
+        results.push(firstWord);
+      }
+    }
+  }
+  if (results) {
+    target.setCustomValidity(
+        'Один и тот же хэш-тег не может быть использован дважды, даже набранный БОЛЬШИМИ буквами (хэш-теги нечувствительны к регистру)'
+    );
+  };
+};
+
 hashtagsInput.addEventListener('input', function (evt) {
   var target = evt.target;
   var tags = target.value.split([DELIM]);
@@ -246,18 +265,19 @@ hashtagsInput.addEventListener('input', function (evt) {
         'Нельзя указать больше ' + MAX_HASHYAG_COUNT + '-ти хэш-тегов'
     );
   }
+  getDoubles(tags, target);
   var tag = '';
   for (var i = 0; i < tags.length; i++) {
     tag = tags[i];
-
-
     var letters = tag.split(['']);
     if (letters[0] !== '#') {
       target.setCustomValidity(
-          'Хэш-тег должен начинаеться с символа # (решётка)'
+          'Хэш-тег должен начинаться с символа # (решётка)'
       );
     } else {
+      tag = tag.slice(1).toLowerCase();
       findWrongWord(target, tag);
     }
   }
 });
+// Сплит строки по пробелам. Трим с конца и привести к нижнему регистру, а потом сравнивать. Свич кейз - в проверке на классы. Сделать поле необязательным

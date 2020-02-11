@@ -254,7 +254,7 @@ var getDoubles = function (words, target) {
     target.setCustomValidity(
         'Один и тот же хэш-тег не может быть использован дважды, даже набранный БОЛЬШИМИ буквами (хэш-теги нечувствительны к регистру)'
     );
-  };
+  }
 };
 
 hashtagsInput.addEventListener('input', function (evt) {
@@ -280,4 +280,3 @@ hashtagsInput.addEventListener('input', function (evt) {
     }
   }
 });
-// Сплит строки по пробелам. Трим с конца и привести к нижнему регистру, а потом сравнивать. Свич кейз - в проверке на классы. Сделать поле необязательным

@@ -105,22 +105,15 @@ var commentsLoader = document.querySelector('.comments-loader');
 commentsLoader.classList.add('hidden');
 // Запрещает прокрутку экрана при открытом модальном окне
 var body = document.querySelector('body');
-// body.classList.add('modal-open');
 
 var applyEffect = function () {
   // Применяет эффект для изображения
-// Находит радио-кнопки
   var effectsRadios = document.querySelectorAll('.effects__radio');
-  // Находит превью картинки
   var effectsPreviews = document.querySelectorAll('.effects__preview');
-  // Создает названия классов, которые применятся к картинке
   var effectsNames = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
   var addedEffectClass = 'effects__preview--';
-  // Находит картинку, к которой нужно применить эффект
   var imgUploadPreview = document.querySelector('.img-upload__preview img');
-  // Находит слайдер
   var effectLevelScale = document.querySelector('.img-upload__effect-level');
-  // Находит пин
   var pin = document.querySelector('.effect-level__pin');
   effectLevelScale.classList.add('hidden');
   var START_VALUE = 100;

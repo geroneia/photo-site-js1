@@ -72,7 +72,7 @@ var getPicture = function (picture) {
 
 // Находит и отображает блок с полноэкранным показом изображений
 var bigPicture = document.querySelector('.big-picture');
-// bigPicture.classList.remove('hidden');
+
 // Заполняет блок данными из объекта photo
 var getBigPicture = function (picture) {
   bigPicture.querySelector('.big-picture__img img').src = picture.url;
@@ -176,7 +176,6 @@ var ESC_KEY = 'Escape';
 var MIN_HASHTAG_LENGTH = 2;
 var MAX_HASHTAG_LENGTH = 20;
 var MAX_HASHYAG_COUNT = 5;
-var DELIM = ' ';
 var onEscPress = function (evt) {
   if (evt.key === ESC_KEY) {
     closeImgUpload();
@@ -214,9 +213,9 @@ imgUploadCancel.addEventListener('click', function () {
 // Производит валидацию хэштегов
 // Проверка слов
 var findWrongWord = function (target, tag) {
-  if (tag.match(/\W/g)) {
+  if (tag.match(/[^A-Za-zа-яА-Я0-9]/u)) {
     target.setCustomValidity(
-        'Хэш-тег должен состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т.п.), символы пунктуации (тире, дефис, запятая и т.п.), эмодзи и т.д.'
+        'Хэш-тег должен состоять только из букв и чисел'
     );
   } else if (tag.length < MIN_HASHTAG_LENGTH) {
     target.setCustomValidity(
@@ -252,7 +251,10 @@ var getDoubles = function (words, target) {
 
 hashtagsInput.addEventListener('input', function (evt) {
   var target = evt.target;
-  var tags = target.value.split([DELIM]);
+  var tags = target.value.split([' ']);
+  tags = tags.filter(function (el) {
+    return el !== ''
+  });
   if (tags.length > MAX_HASHYAG_COUNT) {
     target.setCustomValidity(
         'Нельзя указать больше ' + MAX_HASHYAG_COUNT + '-ти хэш-тегов'
@@ -262,8 +264,7 @@ hashtagsInput.addEventListener('input', function (evt) {
   var tag = '';
   for (var i = 0; i < tags.length; i++) {
     tag = tags[i];
-    var letters = tag.split(['']);
-    if (letters[0] !== '#') {
+    if (tag.charAt(0) !== '#') {
       target.setCustomValidity(
           'Хэш-тег должен начинаться с символа # (решётка)'
       );

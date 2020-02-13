@@ -213,7 +213,7 @@ imgUploadCancel.addEventListener('click', function () {
 // Производит валидацию хэштегов
 // Проверка слов
 var findWrongWord = function (target, tag) {
-  if (tag.match(/[^A-Za-zа-яА-Я0-9]/u)) {
+  if (tag.match(/[^а-яА-ЯёЁa-zA-Z0-9]+$/)) {
     target.setCustomValidity(
         'Хэш-тег должен состоять только из букв и чисел'
     );
@@ -253,7 +253,7 @@ hashtagsInput.addEventListener('input', function (evt) {
   var target = evt.target;
   var tags = target.value.split([' ']);
   tags = tags.filter(function (el) {
-    return el !== ''
+    return el !== '';
   });
   if (tags.length > MAX_HASHYAG_COUNT) {
     target.setCustomValidity(

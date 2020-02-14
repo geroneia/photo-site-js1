@@ -72,7 +72,7 @@ var getPicture = function (picture) {
 
 // Находит и отображает блок с полноэкранным показом изображений
 var bigPicture = document.querySelector('.big-picture');
-bigPicture.classList.remove('hidden');
+
 // Заполняет блок данными из объекта photo
 var getBigPicture = function (picture) {
   bigPicture.querySelector('.big-picture__img img').src = picture.url;
@@ -105,4 +105,172 @@ var commentsLoader = document.querySelector('.comments-loader');
 commentsLoader.classList.add('hidden');
 // Запрещает прокрутку экрана при открытом модальном окне
 var body = document.querySelector('body');
-body.classList.add('modal-open');
+
+var applyEffect = function () {
+  // Применяет эффект для изображения
+  var effectsRadios = document.querySelectorAll('.effects__radio');
+  var effectsPreviews = document.querySelectorAll('.effects__preview');
+  var effectsNames = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
+  var addedEffectClass = 'effects__preview--';
+  var imgUploadPreview = document.querySelector('.img-upload__preview img');
+  var effectLevelScale = document.querySelector('.img-upload__effect-level');
+  var pin = document.querySelector('.effect-level__pin');
+  effectLevelScale.classList.add('hidden');
+  var START_VALUE = 100;
+
+  // Описывает изменение насыщенности с помощью бегунка
+  var effectLevelValue = document.querySelector('.effect-level__value');
+
+  var applyEffectDepth = function (value) {
+    if (imgUploadPreview.classList.contains('effects__preview--chrome')) {
+      imgUploadPreview.style.filter = 'grayscale(' + 1 / 100 * value + ')';
+    } else if (imgUploadPreview.classList.contains('effects__preview--sepia')) {
+      imgUploadPreview.style.filter = 'sepia(' + 1 / 100 * value + ')';
+    } else if (imgUploadPreview.classList.contains('effects__preview--marvin')) {
+      imgUploadPreview.style.filter = 'invert(' + value + '%)';
+    } else if (imgUploadPreview.classList.contains('effects__preview--phobos')) {
+      imgUploadPreview.style.filter = 'blur(' + 3 / 100 * value + 'px)';
+    } else if (imgUploadPreview.classList.contains('effects__preview--heat')) {
+      imgUploadPreview.style.filter = 'brightness(' + 3 / 100 * value + ')';
+    } else {
+      imgUploadPreview.style.filter = '';
+    }
+  };
+  // Тут будет считаться положение пина и заполняться value, но перетаскивание - это следующая тема, и я пока не делала
+  pin.addEventListener('mouseup', function () {
+    var changedValue = effectLevelValue.value;
+    applyEffectDepth(changedValue);
+  });
+  // Перебирает псевдомассив превью картинок
+  var changeEffect = function (effectPreview, addedClass, effectsRadio) {
+    effectPreview.addEventListener('click', function () {
+      for (var k = 0; k < effectsRadios.length; k++) {
+        if (effectsRadios[k].checked) {
+          effectsRadios[k].checked = false;
+        }
+      }
+      effectsRadio.checked = true;
+      if (effectsRadio.value !== 'none') {
+        effectLevelScale.classList.remove('hidden');
+      } else {
+        effectLevelScale.classList.add('hidden');
+      }
+      imgUploadPreview.removeAttribute('class');
+      imgUploadPreview.classList.add(addedClass);
+      applyEffectDepth(START_VALUE);
+    });
+  };
+
+  for (var i = 0; i < effectsPreviews.length; i++) {
+    changeEffect(effectsPreviews[i], addedEffectClass + effectsNames[i], effectsRadios[i]);
+  }
+};
+
+// Показывает форму редактироваия изображения
+var uploadFile = document.querySelector('#upload-file');
+var imgUploadOverlay = document.querySelector('.img-upload__overlay');
+var imgUploadCancel = document.querySelector('#upload-cancel');
+var value = uploadFile.value;
+var hashtagsInput = document.querySelector('.text__hashtags');
+var ESC_KEY = 'Escape';
+var MIN_HASHTAG_LENGTH = 2;
+var MAX_HASHTAG_LENGTH = 20;
+var MAX_HASHYAG_COUNT = 5;
+var onEscPress = function (evt) {
+  if (evt.key === ESC_KEY) {
+    closeImgUpload();
+  }
+};
+
+var openImgUpload = function () {
+  imgUploadOverlay.classList.remove('hidden');
+  document.addEventListener('keydown', onEscPress);
+  hashtagsInput.addEventListener('focus', function () {
+    document.removeEventListener('keydown', onEscPress);
+  });
+  hashtagsInput.addEventListener('blur', function () {
+    document.addEventListener('keydown', onEscPress);
+  });
+  body.classList.add('modal-open');
+};
+
+var closeImgUpload = function () {
+  imgUploadOverlay.classList.add('hidden');
+  document.removeEventListener('keydown', onEscPress);
+  body.classList.remove('modal-open');
+};
+
+uploadFile.addEventListener('change', function () {
+  if (value !== uploadFile.value) {
+    openImgUpload();
+    applyEffect();
+  }
+});
+imgUploadCancel.addEventListener('click', function () {
+  closeImgUpload();
+});
+
+// Производит валидацию хэштегов
+// Проверка слов
+var findWrongWord = function (target, tag) {
+  if (tag.match(/[^а-яА-ЯёЁa-zA-Z0-9]+$/)) {
+    target.setCustomValidity(
+        'Хэш-тег должен состоять только из букв и чисел'
+    );
+  } else if (tag.length < MIN_HASHTAG_LENGTH) {
+    target.setCustomValidity(
+        'Минимальная длина хэш-тега ' + MIN_HASHTAG_LENGTH + ' символов, включая решётку'
+    );
+  } else if (tag.length > MAX_HASHTAG_LENGTH) {
+    target.setCustomValidity(
+        'Максимальная длина хэш-тега ' + MAX_HASHTAG_LENGTH + ' символов, включая решётку'
+    );
+  } else {
+    target.setCustomValidity('');
+  }
+};
+
+// Ищет одинаковые теги
+var getDoubles = function (words, target) {
+  var results = [];
+  for (var i = 0; i < words.length; i++) {
+    var firstWord = words[i];
+    for (var k = i + 1; k < words.length; k++) {
+      var secondWord = words[k];
+      if (firstWord.toLowerCase() === secondWord.toLowerCase()) {
+        results.push(firstWord);
+      }
+    }
+  }
+  if (results) {
+    target.setCustomValidity(
+        'Один и тот же хэш-тег не может быть использован дважды, даже набранный БОЛЬШИМИ буквами (хэш-теги нечувствительны к регистру)'
+    );
+  }
+};
+
+hashtagsInput.addEventListener('input', function (evt) {
+  var target = evt.target;
+  var tags = target.value.split([' ']);
+  tags = tags.filter(function (el) {
+    return el !== '';
+  });
+  if (tags.length > MAX_HASHYAG_COUNT) {
+    target.setCustomValidity(
+        'Нельзя указать больше ' + MAX_HASHYAG_COUNT + '-ти хэш-тегов'
+    );
+  }
+  getDoubles(tags, target);
+  var tag = '';
+  for (var i = 0; i < tags.length; i++) {
+    tag = tags[i];
+    if (tag.charAt(0) !== '#') {
+      target.setCustomValidity(
+          'Хэш-тег должен начинаться с символа # (решётка)'
+      );
+    } else {
+      tag = tag.slice(1).toLowerCase();
+      findWrongWord(target, tag);
+    }
+  }
+});

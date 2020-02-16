@@ -9,8 +9,7 @@
   var MIN_PHOTOS_COUNT = 1;
   var PHOTOS_COUNT = 25;
 
-  // Находит место, куда вставятся фотки
-  var anotherUserPictures = document.querySelector('.pictures');
+
   // Находит шаблон
   var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
@@ -57,30 +56,25 @@
       return allCommentLayout;
     },
     // Собирает шаблон картинки с данными
-    getPicture: function (picture) {
+    getPictureTemplate: function (picture) {
     // клонирует шаблон
       var userPhoto = pictureTemplate.cloneNode(true);
 
       userPhoto.querySelector('.picture__img').src = picture.url;
       userPhoto.querySelector('.picture__likes').textContent = picture.likes;
       userPhoto.querySelector('.picture__comments').textContent = picture.comments.length;
+      userPhoto.querySelector('.picture__img').setAttribute('id', picture.url);
       return userPhoto;
     },
-    // Создает фрагмент
-    applyFragment: function (cb) {
-      var fragment = document.createDocumentFragment();
-      for (var j = 0; j < PHOTOS_COUNT; j++) {
-        var photo = {
-          url: 'photos/' + window.data.getRandomInteger(MIN_PHOTOS_COUNT, PHOTOS_COUNT) + '.jpg',
-          description: '',
-          likes: window.data.getRandomInteger(MIN_LIKES_COUNT, MAX_LIKES_COUNT),
-          comments: window.data.getComments()
-        };
-        fragment.appendChild(window.data.getPicture(photo));
-        cb(photo);
-      }
-      // добавляет шаблон в отведенное место
-      anotherUserPictures.appendChild(fragment);
+
+    getPhoto: function () {
+      var photo = {
+        url: 'photos/' + window.data.getRandomInteger(MIN_PHOTOS_COUNT, PHOTOS_COUNT) + '.jpg',
+        description: '',
+        likes: window.data.getRandomInteger(MIN_LIKES_COUNT, MAX_LIKES_COUNT),
+        comments: window.data.getComments()
+      };
+      return photo;
     }
   };
 })();

@@ -5,7 +5,6 @@
   var imgUploadOverlay = document.querySelector('.img-upload__overlay');
   var imgUploadCancel = document.querySelector('#upload-cancel');
   var value = uploadFile.value;
-  var hashtagsInput = document.querySelector('.text__hashtags');
   var ESC_KEY = 'Escape';
   var onEscPress = function (evt) {
     if (evt.key === ESC_KEY) {

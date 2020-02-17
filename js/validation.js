@@ -1,9 +1,9 @@
 'use strict';
 (function () {
-  var hashtagsInput = document.querySelector('.text__hashtags');
   var MIN_HASHTAG_LENGTH = 2;
   var MAX_HASHTAG_LENGTH = 20;
   var MAX_HASHYAG_COUNT = 5;
+  var hashtagsInput = document.querySelector('.text__hashtags');
 
   // Производит валидацию хэштегов
   // Проверка слов
@@ -59,13 +59,13 @@
     var tag = '';
     for (var i = 0; i < tags.length; i++) {
       tag = tags[i];
-      if (tag.charAt(0) !== '#') {
+      if (tag.charAt(0) === '#') {
+        tag = tag.slice(1).toLowerCase();
+        findWrongWord(target, tag);
+      } else {
         target.setCustomValidity(
             'Хэш-тег должен начинаться с символа # (решётка)'
         );
-      } else {
-        tag = tag.slice(1).toLowerCase();
-        findWrongWord(target, tag);
       }
     }
   });

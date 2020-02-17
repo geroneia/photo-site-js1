@@ -63,7 +63,7 @@
       userPhoto.querySelector('.picture__img').src = picture.url;
       userPhoto.querySelector('.picture__likes').textContent = picture.likes;
       userPhoto.querySelector('.picture__comments').textContent = picture.comments.length;
-      userPhoto.querySelector('.picture__img').setAttribute('id', picture.url);
+      userPhoto.querySelector('.picture__img').dataset.id = picture.url;
       return userPhoto;
     },
 

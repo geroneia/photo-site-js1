@@ -1,11 +1,12 @@
 'use strict';
 (function () {
+  var ESC_KEY = 'Escape';
+  var START_VALUE = 100;
   var body = document.querySelector('body');
   var uploadFile = document.querySelector('#upload-file');
   var imgUploadOverlay = document.querySelector('.img-upload__overlay');
   var imgUploadCancel = document.querySelector('#upload-cancel');
   var value = uploadFile.value;
-  var ESC_KEY = 'Escape';
   var onEscPress = function (evt) {
     if (evt.key === ESC_KEY) {
       closeImgUpload();
@@ -21,7 +22,6 @@
     var effectLevelScale = document.querySelector('.img-upload__effect-level');
     var pin = document.querySelector('.effect-level__pin');
     effectLevelScale.classList.add('hidden');
-    var START_VALUE = 100;
 
     var effectLevelValue = document.querySelector('.effect-level__value');
     var getEffectDepth = function (className, currentValue) {
@@ -61,25 +61,30 @@
   };
 
   // Показывает форму редактироваия изображения
+  var onInputFocus = function (evt) {
+    if (evt.target.classList.contains('text__hashtags')) {
+      document.removeEventListener('keydown', onEscPress);
+    }
+  };
+  var onInputBlur = function (evt) {
+    if (evt.target.classList.contains('text__hashtags')) {
+      document.addEventListener('keydown', onEscPress);
+    }
+  };
+
   var openImgUpload = function () {
     imgUploadOverlay.classList.remove('hidden');
     document.addEventListener('keydown', onEscPress);
-    document.addEventListener('focus', function (evt) {
-      if (evt.target.className === 'text__hashtags') {
-        document.removeEventListener('keydown', onEscPress);
-      }
-    }, true);
-    document.addEventListener('blur', function (evt) {
-      if (evt.target.className === 'text__hashtags') {
-        document.addEventListener('keydown', onEscPress);
-      }
-    }, true);
+    document.addEventListener('focus', onInputFocus, true);
+    document.addEventListener('blur', onInputBlur, true);
     body.classList.add('modal-open');
   };
 
   var closeImgUpload = function () {
     imgUploadOverlay.classList.add('hidden');
     document.removeEventListener('keydown', onEscPress);
+    document.removeEventListener('focus', onInputFocus, true);
+    document.removeEventListener('blur', onInputBlur, true);
     body.classList.remove('modal-open');
   };
 

@@ -9,7 +9,6 @@
   var MIN_PHOTOS_COUNT = 1;
   var PHOTOS_COUNT = 25;
 
-
   // Находит шаблон
   var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 

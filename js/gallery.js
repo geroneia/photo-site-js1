@@ -20,7 +20,7 @@
   renderGallery();
   anotherUserPictures.addEventListener('click', function (evt) {
     var target = evt.target;
-    if (target.className === 'picture__img') {
+    if (target.classList.contains('picture__img')) {
       var url = target.dataset.id;
       for (var i = 0; i < photos.length; i++) {
         if (photos[i].url === url) {

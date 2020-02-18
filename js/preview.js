@@ -31,7 +31,6 @@
       document.addEventListener('keydown', onEscPress);
     },
 
-
     hideComments: function () {
       // Прячет блоки счетчика и загрузки комментов
       var commentsCounter = document.querySelector('.social__comment-count');

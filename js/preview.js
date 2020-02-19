@@ -26,7 +26,7 @@
       bigPicture.querySelector('.big-picture__img img').src = picture.url;
       bigPicture.querySelector('.likes-count').textContent = picture.likes;
       bigPicture.querySelector('.comments-count').textContent = picture.comments.length;
-      bigPicture.querySelector('.social__comments').innerHTML = window.data.getAllCommentsLayout();
+      bigPicture.querySelector('.social__comments').innerHTML = window.data.getAllCommentsLayout(picture.comments);
       bigPicture.querySelector('.social__caption').textContent = '';
       document.addEventListener('keydown', onEscPress);
     },

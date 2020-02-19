@@ -4,27 +4,33 @@
 
   // Находит место, куда вставятся фотки
   var anotherUserPictures = document.querySelector('.pictures');
-
-  // Создает фрагмент и массив для перебора
-  var photos = [];
-  var renderGallery = function () {
+  var images = [];
+  var onSuccessLoading = function (photos) {
     var fragment = document.createDocumentFragment();
     for (var j = 0; j < PHOTOS_COUNT; j++) {
-      var miniPhoto = window.data.getPhoto();
+      var miniPhoto = {
+        url: photos[j].url,
+        description: '',
+        likes: photos[j].likes,
+        comments: window.data.getComments(photos[j].comments)
+      };
       fragment.appendChild(window.data.getPictureTemplate(miniPhoto));
-      photos.push(miniPhoto);
+      images.push(miniPhoto);
     }
     // добавляет шаблон в отведенное место
     anotherUserPictures.appendChild(fragment);
   };
-  renderGallery();
+
+  window.backend.load(onSuccessLoading);
+
+  // Загружает большую фотку при клике на превью
   anotherUserPictures.addEventListener('click', function (evt) {
     var target = evt.target;
     if (target.classList.contains('picture__img')) {
       var id = target.dataset.id;
-      for (var i = 0; i < photos.length; i++) {
-        if (photos[i].url === id) {
-          window.preview.getBigPicture(photos[i]);
+      for (var i = 0; i < images.length; i++) {
+        if (images[i].url === id) {
+          window.preview.getBigPicture(images[i]);
           window.preview.hideComments();
           break;
         }

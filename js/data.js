@@ -16,10 +16,10 @@
       var comments = [];
       for (var i = 0; i < currentComments.length; i++) {
         var comment = {};
-        comment['avatar'] = currentComments[i].avatar;
-        comment['message'] = currentComments[i].message;
-        comment['name'] = currentComments[i].name;
-        comment['layout'] = window.data.getCommentLayout(comment);
+        comment.avatar = currentComments[i].avatar;
+        comment.message = currentComments[i].message;
+        comment.name = currentComments[i].name;
+        comment.layout = window.data.getCommentLayout(comment);
         comments.push(comment);
       }
       return comments;

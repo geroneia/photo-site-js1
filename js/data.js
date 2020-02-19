@@ -22,7 +22,7 @@
   ];
   var authorNames = ['Талита', 'Сури', 'Кузя', 'Киви', 'Горошина', 'Дара'];
   window.data = {
-  // Получает случайное число.
+    // Получает случайное число.
     getRandomInteger: function (min, max) {
       var number = min + Math.random() * (max - min);
       return Math.floor(number);

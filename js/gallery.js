@@ -21,11 +21,12 @@
   anotherUserPictures.addEventListener('click', function (evt) {
     var target = evt.target;
     if (target.classList.contains('picture__img')) {
-      var url = target.dataset.id;
+      var id = target.dataset.id;
       for (var i = 0; i < photos.length; i++) {
-        if (photos[i].url === url) {
+        if (photos[i].url === id) {
           window.preview.getBigPicture(photos[i]);
           window.preview.hideComments();
+          break;
         }
       }
     }

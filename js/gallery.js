@@ -40,7 +40,7 @@
   window.backend.load(onSuccessLoading);
 
   // Загружает большую фотку при клике на превью
-  var open = function (evt) {
+  var onImageClick = function (evt) {
     var target = evt.target;
     if (target.classList.contains('picture__img')) {
       var id = target.dataset.id;
@@ -54,7 +54,7 @@
     }
   };
 
-  document.addEventListener('click', open);
+  document.addEventListener('click', onImageClick);
 
   document.addEventListener('keydown', onEnterPress);
 })();

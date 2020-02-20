@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   var ESC_KEY = 'Escape';
+
   // Находит и отображает блок с полноэкранным показом изображений
   var bigPicture = document.querySelector('.big-picture');
   var cancelButton = document.querySelector('.big-picture__cancel');

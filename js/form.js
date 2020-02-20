@@ -64,10 +64,14 @@
   var onInputFocus = function (evt) {
     if (evt.target.classList.contains('text__hashtags')) {
       document.removeEventListener('keydown', onEscPress);
+    } else if (evt.target.classList.contains('text__description')) {
+      document.removeEventListener('keydown', onEscPress);
     }
   };
   var onInputBlur = function (evt) {
     if (evt.target.classList.contains('text__hashtags')) {
+      document.addEventListener('keydown', onEscPress);
+    } else if (evt.target.classList.contains('text__description')) {
       document.addEventListener('keydown', onEscPress);
     }
   };

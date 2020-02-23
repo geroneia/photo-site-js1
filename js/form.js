@@ -4,6 +4,8 @@
   var START_VALUE = 100;
   var PIN_WIDTH = 18;
   var body = document.querySelector('body');
+  var main = document.querySelector('main');
+  var form = document.querySelector('.img-upload__form');
   var uploadFile = document.querySelector('#upload-file');
   var imgUploadOverlay = document.querySelector('.img-upload__overlay');
   var imgUploadCancel = document.querySelector('#upload-cancel');
@@ -105,7 +107,7 @@
     }
   };
 
-  // Показывает форму редактироваия изображения
+  // Показывает и убирает форму редактироваия изображения
   var onInputFocus = function (evt) {
     if (evt.target.classList.contains('text__hashtags')) {
       document.removeEventListener('keydown', onEscPress);
@@ -146,5 +148,49 @@
   });
   imgUploadCancel.addEventListener('click', function () {
     closeImgUpload();
+  });
+
+  // Показывает и убирает сообщение об успехе загрузки
+  var showMessageModal = function (message) {
+    var template = document.querySelector('#' + message)
+    .content
+    .querySelector('.' + message);
+    var modal = template.cloneNode(true);
+    main.insertAdjacentElement('afterbegin', modal);
+
+    var closeModal = function () {
+      modal.parentNode.removeChild(modal);
+    };
+    var onModalEscPress = function (evt) {
+      if (evt.key === ESC_KEY) {
+        closeModal();
+      }
+    };
+    document.addEventListener('keydown', onModalEscPress);
+    document.addEventListener('click', function (evt) {
+      document.removeEventListener('keydown', onModalEscPress);
+      var target = evt.target;
+      if (target.classList.contains(message)) {
+        closeModal();
+      } else if (target.classList.contains(message + '__button')) {
+        closeModal();
+      }
+    });
+  };
+
+  var onSuccessLoading = function () {
+    showMessageModal('success');
+  };
+
+  var onErrorLoading = function () {
+    showMessageModal('error');
+  };
+
+  // Отправляет форму
+  form.addEventListener('submit', function (evt) {
+    window.backend.upload(new FormData(evt.target), onSuccessLoading, onErrorLoading);
+    closeImgUpload();
+    form.reset();
+    evt.preventDefault();
   });
 })();

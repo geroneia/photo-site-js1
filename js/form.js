@@ -2,11 +2,19 @@
 (function () {
   var ESC_KEY = 'Escape';
   var START_VALUE = 100;
+  var PIN_WIDTH = 18;
   var body = document.querySelector('body');
   var uploadFile = document.querySelector('#upload-file');
   var imgUploadOverlay = document.querySelector('.img-upload__overlay');
   var imgUploadCancel = document.querySelector('#upload-cancel');
+  var pin = document.querySelector('.effect-level__pin');
+  var effectLevelDepth = document.querySelector('.effect-level__depth');
+  var effectLevelValue = document.querySelector('.effect-level__value');
   var value = uploadFile.value;
+  var effectLevelLine = document.querySelector('.effect-level__line');
+  var imgUploadPreview = document.querySelector('.img-upload__preview img');
+  var appliedClassName = '';
+
   var onEscPress = function (evt) {
     if (evt.key === ESC_KEY) {
       closeImgUpload();
@@ -18,12 +26,9 @@
     var effectsPreviews = document.querySelectorAll('.effects__preview');
     var effectsNames = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
     var addedEffectClass = 'effects__preview--';
-    var imgUploadPreview = document.querySelector('.img-upload__preview img');
     var effectLevelScale = document.querySelector('.img-upload__effect-level');
-    var pin = document.querySelector('.effect-level__pin');
     effectLevelScale.classList.add('hidden');
 
-    var effectLevelValue = document.querySelector('.effect-level__value');
     var getEffectDepth = function (className, currentValue) {
       var stateToEffectDepth = {
         'effects__preview--chrome': 'grayscale(' + 1 / 100 * currentValue + ')',
@@ -35,25 +40,65 @@
       };
       return stateToEffectDepth[className];
     };
+    // Описывает перемещение бегунка и изменение эффекта
+    var onMouseDown = function (evt) {
+      evt.preventDefault();
+      var scale = effectLevelLine.offsetWidth;
+      var minX = effectLevelLine.getBoundingClientRect().x + PIN_WIDTH / 2;
+      var maxX = minX + scale - PIN_WIDTH;
+      var startCoordX = evt.clientX;
+
+      var onMouseMove = function (moveEvt) {
+        moveEvt.preventDefault();
+
+        if (moveEvt.clientX >= minX && moveEvt.clientX <= maxX) {
+          var shift = startCoordX - moveEvt.clientX;
+          startCoordX = moveEvt.clientX;
+
+          var changedValue = ((pin.offsetLeft - shift) * 100 / scale);
+          changedValue = changedValue.toFixed(1);
+          if (changedValue > START_VALUE) {
+            changedValue = START_VALUE;
+          } else if (changedValue < 0) {
+            changedValue = 0;
+          }
+          pin.style.left = changedValue + '%';
+          effectLevelDepth.style.width = changedValue + '%';
+          effectLevelValue.setAttribute('value', changedValue);
+          imgUploadPreview.style.filter = getEffectDepth(appliedClassName, changedValue);
+        }
+      };
+
+      var onMouseUp = function (upEvt) {
+        upEvt.preventDefault();
+
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+      };
+
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    };
 
     // Перебирает псевдомассив превью картинок
     var changeEffect = function (effectPreview, addedClass, effectsRadio) {
       document.addEventListener('click', function (evt) {
         if (evt.target === effectPreview) {
+          pin.removeEventListener('mousedown', onMouseDown);
           effectsRadio.checked = true;
           effectLevelScale.classList.toggle('hidden', effectsRadio.value === 'none');
           imgUploadPreview.removeAttribute('class');
           imgUploadPreview.classList.add(addedClass);
+          appliedClassName = addedClass;
           imgUploadPreview.style.filter = getEffectDepth(addedClass, START_VALUE);
-
-          // Описывает изменение насыщенности с помощью бегунка
-          pin.addEventListener('mouseup', function () {
-            var changedValue = effectLevelValue.value;
-            imgUploadPreview.style.filter = getEffectDepth(addedClass, changedValue);
-          });
+          pin.style.left = START_VALUE + '%';
+          effectLevelDepth.style.width = START_VALUE + '%';
+          effectLevelValue.setAttribute('value', START_VALUE);
+          pin.addEventListener('mousedown', onMouseDown);
         }
       });
     };
+
     // Сопоставляет превью-картинку, класс и радио-кнопку
     for (var i = 0; i < effectsPreviews.length; i++) {
       changeEffect(effectsPreviews[i], addedEffectClass + effectsNames[i], effectsRadios[i]);
@@ -68,6 +113,7 @@
       document.removeEventListener('keydown', onEscPress);
     }
   };
+
   var onInputBlur = function (evt) {
     if (evt.target.classList.contains('text__hashtags')) {
       document.addEventListener('keydown', onEscPress);

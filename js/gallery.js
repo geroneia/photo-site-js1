@@ -86,7 +86,7 @@
     photos = data;
     window.gallery.renderPhotos(window.gallery.getDefaultPhotos());
     window.filter.showButtons();
-    window.filter.onButtonClick();
+    document.addEventListener('click', window.filter.onButtonClick);
   };
 
   window.backend.load(onSuccessLoading);
@@ -105,6 +105,5 @@
       }
     }
   });
-
   document.addEventListener('keydown', onEnterPress);
 })();

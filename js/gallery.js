@@ -4,6 +4,7 @@
   var DISCUSSED_PHOTOS_COUNT = 10;
   var ENTER_KEY = 'Enter';
 
+  // Открывает большую фотку по нажатию на Enter
   var onEnterPress = function (evt) {
     if (evt.key === ENTER_KEY) {
       var target = evt.target;
@@ -21,19 +22,21 @@
   };
   // Находит место, куда вставятся фотки
   var anotherUserPictures = document.querySelector('.pictures');
+
+  // Сохраняет данные, полученые с сервера и при работе функции-сборщике фото, для дальнейших изменнений
   var images = [];
   var photos = [];
   var defaultPhotos = [];
 
+  // Собирает шаблон фото
   window.gallery = {
     renderPhotos: function (data) {
-      images = [];
+      // Убирает загруженные ранее фото
       var pictures = document.querySelectorAll('.picture');
       for (var i = 0; i < pictures.length; i++) {
         pictures[i].remove();
       }
       var fragment = document.createDocumentFragment();
-      fragment.innerHTML = '';
       for (var j = 0; j < data.length; j++) {
         var miniPhoto = {
           url: data[j].url,
@@ -47,6 +50,7 @@
       // добавляет шаблон в отведенное место
       anotherUserPictures.appendChild(fragment);
     },
+    // Описывает варианты подборок фотографий по критериям из фильтров
     getDefaultPhotos: function () {
       defaultPhotos = defaultPhotos.slice(0, PHOTOS_COUNT);
       return defaultPhotos;
@@ -65,11 +69,9 @@
       };
 
       var mixedPhotos = getRandomData(photos);
-
       var uniqueRandomPhotos = mixedPhotos.filter(function (it, i) {
         return mixedPhotos.indexOf(it) === i;
       });
-
       uniqueRandomPhotos = uniqueRandomPhotos.slice(0, DISCUSSED_PHOTOS_COUNT);
       return uniqueRandomPhotos;
     },
@@ -81,6 +83,7 @@
       return discussedPhoto;
     }
   };
+  // Запускает формирование галереи при успешной загрузке данных
   var onSuccessLoading = function (data) {
     defaultPhotos = data;
     photos = data;

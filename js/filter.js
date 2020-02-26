@@ -7,7 +7,7 @@
     showButtons: function () {
       filter.classList.remove('img-filters--inactive');
     },
-    onButtonClick: function (evt) {
+    onButtonClick: window.debounce(function (evt) {
       var target = evt.target;
       var id = target.getAttribute('id');
       if (target.classList.contains('img-filters__button')) {
@@ -23,6 +23,6 @@
       } else if (id === 'filter-discussed') {
         window.gallery.renderPhotos(window.gallery.getDiscussedPhoto());
       }
-    }
+    })
   };
 })();

@@ -2,6 +2,7 @@
 (function () {
   // Находит шаблон
   var commentsLoader = document.querySelector('.comments-loader');
+  var bigPicture = document.querySelector('.big-picture');
   var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
   window.data = {
@@ -26,7 +27,8 @@
       return comments;
     },
     // Получает разметку всех комментариев к фотографии
-    getAllCommentsLayout: function (bigPhotoComments) {
+    allCommentsLayout: function (bigPhotoComments) {
+      // debugger
       var commentLayouts = [];
       var comments = window.data.getComments(bigPhotoComments);
       for (var i = 0; i < comments.length; i++) {
@@ -35,29 +37,28 @@
 
       if (comments.length <= 5) {
         commentLayouts = commentLayouts.join([]);
-        // window.preview.hideComments();
-        return commentLayouts;
+        bigPicture.querySelector('.social__comments').innerHTML = commentLayouts;
+        commentsLoader.classList.add('hidden');
+
       } else {
-        var firstBlockOfComments = commentLayouts.splice(0, 5);
+        var firstBlockOfComments = [];
+        firstBlockOfComments = commentLayouts.splice(0, 5);
+        bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
+        commentsLoader.classList.remove('hidden');
         commentsLoader.addEventListener('click', function () {
-          // debugger
-          if (commentLayouts !== 0) {
+          // bigPicture.querySelector('.social__comments').innerHTML = '';
+          if (commentLayouts.length >= 5) {
             var followingBlockOfComments = commentLayouts.splice(0, 5);
             firstBlockOfComments = firstBlockOfComments.concat(followingBlockOfComments);
+            bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
           } else {
-            window.preview.hideComments();
+            firstBlockOfComments = firstBlockOfComments.concat(commentLayouts);
+            commentsLoader.classList.add('hidden');
           }
+          bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
         });
-        return firstBlockOfComments;
-      }
 
-      // } else {
-      //   var subarray = [];
-      //   for (var j = 0; j < Math.ceil(comments.length / 5); j++) {
-      //     subarray[j] = comments.slice((j * 5), (j * 5) + 5);
-      //   }
-      //   return subarray;
-      // }
+      }
 
     },
     // Собирает шаблон картинки с данными

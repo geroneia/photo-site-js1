@@ -103,6 +103,7 @@
       for (var i = 0; i < images.length; i++) {
         if (images[i].url === id) {
           window.preview.getBigPicture(images[i]);
+          // window.preview.getComments(images[i]);
           filter.removeEventListener('click', window.filter.onButtonClick);
           break;
         }

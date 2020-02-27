@@ -27,10 +27,14 @@
       bigPicture.querySelector('.big-picture__img img').src = picture.url;
       bigPicture.querySelector('.likes-count').textContent = picture.likes;
       bigPicture.querySelector('.comments-count').textContent = picture.comments.length;
-      bigPicture.querySelector('.social__comments').innerHTML = window.data.getAllCommentsLayout(picture.comments);
       bigPicture.querySelector('.social__caption').textContent = '';
+      window.data.allCommentsLayout(picture.comments);
       document.addEventListener('keydown', onEscPress);
     },
+
+    // getComments: function (picture) {
+    //   bigPicture.querySelector('.social__comments').innerHTML = window.data.getAllCommentsLayout(picture.comments);
+    // },
 
     hideComments: function () {
       // Прячет блоки счетчика и загрузки комментов

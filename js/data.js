@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   // Находит шаблон
+  var commentsLoader = document.querySelector('.comments-loader');
   var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
   window.data = {
@@ -26,12 +27,38 @@
     },
     // Получает разметку всех комментариев к фотографии
     getAllCommentsLayout: function (bigPhotoComments) {
-      var allCommentLayout = '';
+      var commentLayouts = [];
       var comments = window.data.getComments(bigPhotoComments);
       for (var i = 0; i < comments.length; i++) {
-        allCommentLayout += comments[i].layout;
+        commentLayouts.push(comments[i].layout);
       }
-      return allCommentLayout;
+
+      if (comments.length <= 5) {
+        commentLayouts = commentLayouts.join([]);
+        // window.preview.hideComments();
+        return commentLayouts;
+      } else {
+        var firstBlockOfComments = commentLayouts.splice(0, 5);
+        commentsLoader.addEventListener('click', function () {
+          // debugger
+          if (commentLayouts !== 0) {
+            var followingBlockOfComments = commentLayouts.splice(0, 5);
+            firstBlockOfComments = firstBlockOfComments.concat(followingBlockOfComments);
+          } else {
+            window.preview.hideComments();
+          }
+        });
+        return firstBlockOfComments;
+      }
+
+      // } else {
+      //   var subarray = [];
+      //   for (var j = 0; j < Math.ceil(comments.length / 5); j++) {
+      //     subarray[j] = comments.slice((j * 5), (j * 5) + 5);
+      //   }
+      //   return subarray;
+      // }
+
     },
     // Собирает шаблон картинки с данными
     getPictureTemplate: function (picture) {

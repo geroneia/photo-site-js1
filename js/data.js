@@ -4,6 +4,7 @@
   var commentsLoader = document.querySelector('.comments-loader');
   var bigPicture = document.querySelector('.big-picture');
   var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+  var commentsBlockLength = 5;
 
   window.data = {
     // Получает разметку одного комментария
@@ -28,34 +29,36 @@
     },
     // Получает разметку всех комментариев к фотографии
     allCommentsLayout: function (bigPhotoComments) {
-      // debugger
+      bigPicture.querySelector('.social__comments').innerHTML = '';
       var commentLayouts = [];
       var comments = window.data.getComments(bigPhotoComments);
       for (var i = 0; i < comments.length; i++) {
         commentLayouts.push(comments[i].layout);
       }
 
-      if (comments.length <= 5) {
+      if (comments.length <= commentsBlockLength) {
         commentLayouts = commentLayouts.join([]);
         bigPicture.querySelector('.social__comments').innerHTML = commentLayouts;
         commentsLoader.classList.add('hidden');
 
       } else {
         var firstBlockOfComments = [];
-        firstBlockOfComments = commentLayouts.splice(0, 5);
+        firstBlockOfComments = commentLayouts.splice(0, commentsBlockLength);
         bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
         commentsLoader.classList.remove('hidden');
         commentsLoader.addEventListener('click', function () {
-          // bigPicture.querySelector('.social__comments').innerHTML = '';
-          if (commentLayouts.length >= 5) {
-            var followingBlockOfComments = commentLayouts.splice(0, 5);
+
+          if (commentLayouts.length >= commentsBlockLength) {
+            var followingBlockOfComments = commentLayouts.splice(0, commentsBlockLength);
             firstBlockOfComments = firstBlockOfComments.concat(followingBlockOfComments);
             bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
-          } else {
-            firstBlockOfComments = firstBlockOfComments.concat(commentLayouts);
+
+          } else if (commentLayouts.length < commentsBlockLength || commentLayouts.length > 0) {
+            followingBlockOfComments = commentLayouts.splice(0, comments.length);
+            firstBlockOfComments = firstBlockOfComments.concat(followingBlockOfComments);
+            bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
             commentsLoader.classList.add('hidden');
           }
-          bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
         });
 
       }

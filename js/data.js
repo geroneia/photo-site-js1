@@ -42,45 +42,41 @@
       var counter = 0;
       var commentLayouts = getCuttedLayouts(bigPhotoComments);
       var getCommentsCounter = function () {
-        socialCommentCount.innerHTML = counter + ' из <span class="comments-count">' + commentsCount + '</span> котиков';
+        socialCommentCount.innerHTML = counter + ' из <span class="comments-count">' + commentsCount + '</span> комментариев';
       };
 
+      var cuttingComments = function () {
+        if (decreasingBlockOfComments.length > COMMENTS_BLOCK_LENGTH) {
+          var followingBlockOfComments = decreasingBlockOfComments.splice(0, COMMENTS_BLOCK_LENGTH);
+          firstBlockOfComments = firstBlockOfComments.concat(followingBlockOfComments);
+          counter += COMMENTS_BLOCK_LENGTH;
+          getCommentsCounter();
+          bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
+
+        } else {
+          var lastBlockOfComments = decreasingBlockOfComments.splice(0, decreasingBlockOfComments.length);
+          firstBlockOfComments = firstBlockOfComments.concat(lastBlockOfComments);
+          counter = firstBlockOfComments.length;
+          getCommentsCounter();
+          bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
+          firstBlockOfComments.length = 0;
+          commentsLoader.classList.add('hidden');
+          commentsLoader.removeEventListener('click', cuttingComments);
+        }
+      };
       commentsCount = commentLayouts.length;
       var firstBlockOfComments = [];
       var decreasingBlockOfComments = commentLayouts;
-      // Если комменариев больше пяти
-      if (commentLayouts.length > COMMENTS_BLOCK_LENGTH) {
 
+      if (commentLayouts.length > COMMENTS_BLOCK_LENGTH) {
         commentsLoader.classList.remove('hidden');
         firstBlockOfComments = decreasingBlockOfComments.splice(0, COMMENTS_BLOCK_LENGTH);
         bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
         counter = COMMENTS_BLOCK_LENGTH;
         getCommentsCounter();
-        commentsLoader.addEventListener('click', function () {
-          // debugger
-          // Если комментариев больше пяти, но меньше десяти
-          if (decreasingBlockOfComments.length > COMMENTS_BLOCK_LENGTH) {
+        commentsLoader.addEventListener('click', cuttingComments);
 
-            var followingBlockOfComments = decreasingBlockOfComments.splice(0, COMMENTS_BLOCK_LENGTH);
-            firstBlockOfComments = firstBlockOfComments.concat(followingBlockOfComments);
-            counter += COMMENTS_BLOCK_LENGTH;
-            getCommentsCounter();
-            bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
-
-          } else {
-            // Если осталось пять и меньше комментариев в последней порции
-            var lastBlockOfComments = decreasingBlockOfComments.splice(0, decreasingBlockOfComments.length);
-            // debugger
-            firstBlockOfComments = firstBlockOfComments.concat(lastBlockOfComments);
-            counter = firstBlockOfComments.length;
-            getCommentsCounter();
-            bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
-            firstBlockOfComments.length = 0;
-            commentsLoader.classList.add('hidden');
-          }
-        });
       } else {
-        // Если комментариев пять и меньше изначально
         var singleBlockOfComment = commentLayouts;
         counter = singleBlockOfComment.length;
         commentsCount = singleBlockOfComment.length;
@@ -90,6 +86,7 @@
       }
       getCommentsCounter();
     },
+
     // Собирает шаблон картинки с данными
     getPictureTemplate: function (picture) {
       // клонирует шаблон

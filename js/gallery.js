@@ -3,6 +3,7 @@
   var PHOTOS_COUNT = 25;
   var DISCUSSED_PHOTOS_COUNT = 10;
   var ENTER_KEY = 'Enter';
+  var filter = document.querySelector('.img-filters');
 
   // Открывает большую фотку по нажатию на Enter
   var onEnterPress = function (evt) {
@@ -89,7 +90,7 @@
     photos = data;
     window.gallery.renderPhotos(window.gallery.getDefaultPhotos());
     window.filter.showButtons();
-    document.addEventListener('click', window.filter.onButtonClick);
+    filter.addEventListener('click', window.filter.onButtonClick);
   };
 
   window.backend.load(onSuccessLoading);
@@ -102,7 +103,7 @@
       for (var i = 0; i < images.length; i++) {
         if (images[i].url === id) {
           window.preview.getBigPicture(images[i]);
-          window.preview.hideComments();
+          filter.removeEventListener('click', window.filter.onButtonClick);
           break;
         }
       }

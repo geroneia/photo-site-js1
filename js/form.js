@@ -16,12 +16,42 @@
   var effectLevelLine = document.querySelector('.effect-level__line');
   var imgUploadPreview = document.querySelector('.img-upload__preview img');
   var appliedClassName = '';
+  var scaleControlSmaller = document.querySelector('.scale__control--smaller');
+  var scaleControlBigger = document.querySelector('.scale__control--bigger');
+  var scaleControlValue = document.querySelector('.scale__control--value');
+  var scaleChangeStep = 25;
 
+  // Закрытие по Esc
   var onEscPress = function (evt) {
     if (evt.key === ESC_KEY) {
       closeImgUpload();
     }
   };
+
+  // Меняет масштаб
+  var getTotalScale = function (number) {
+    var scale = 'scale(' + number / 100 + ')';
+    return scale;
+  };
+
+  var onPlusButtonClick = function () {
+    var currentScale = Number(scaleControlValue.getAttribute('value'));
+    if (currentScale < START_VALUE) {
+      currentScale += scaleChangeStep;
+      scaleControlValue.setAttribute('value', currentScale);
+      imgUploadPreview.style.transform = getTotalScale(currentScale);
+    }
+  };
+
+  var onMinusButtonClick = function () {
+    var currentScale = Number(scaleControlValue.getAttribute('value'));
+    if (currentScale > scaleChangeStep) {
+      currentScale -= scaleChangeStep;
+      scaleControlValue.setAttribute('value', currentScale);
+      imgUploadPreview.style.transform = getTotalScale(currentScale);
+    }
+  };
+
   var applyEffect = function () {
     // Применяет эффект для изображения
     var effectsRadios = document.querySelectorAll('.effects__radio');
@@ -129,6 +159,10 @@
     document.addEventListener('keydown', onEscPress);
     document.addEventListener('focus', onInputFocus, true);
     document.addEventListener('blur', onInputBlur, true);
+    scaleControlValue.setAttribute('value', START_VALUE);
+    imgUploadPreview.style.transform = getTotalScale(START_VALUE);
+    scaleControlSmaller.addEventListener('click', onMinusButtonClick);
+    scaleControlBigger.addEventListener('click', onPlusButtonClick);
     body.classList.add('modal-open');
   };
 
@@ -137,6 +171,8 @@
     document.removeEventListener('keydown', onEscPress);
     document.removeEventListener('focus', onInputFocus, true);
     document.removeEventListener('blur', onInputBlur, true);
+    scaleControlSmaller.removeEventListener('click', onMinusButtonClick);
+    scaleControlBigger.removeEventListener('click', onPlusButtonClick);
     body.classList.remove('modal-open');
   };
 

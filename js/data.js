@@ -35,34 +35,32 @@
       for (var i = 0; i < comments.length; i++) {
         commentLayouts.push(comments[i].layout);
       }
-
-      if (comments.length <= commentsBlockLength) {
-        commentLayouts = commentLayouts.join([]);
-        bigPicture.querySelector('.social__comments').innerHTML = commentLayouts;
-        commentsLoader.classList.add('hidden');
-
-      } else {
+      if (commentLayouts.length > commentsBlockLength) {
         var firstBlockOfComments = [];
-        firstBlockOfComments = commentLayouts.splice(0, commentsBlockLength);
-        bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
+        var decreasingBlockOfComments = commentLayouts;
         commentsLoader.classList.remove('hidden');
+        firstBlockOfComments = decreasingBlockOfComments.splice(0, commentsBlockLength);
+        bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
         commentsLoader.addEventListener('click', function () {
+          // debugger
+          if (decreasingBlockOfComments.length > commentsBlockLength) {
 
-          if (commentLayouts.length >= commentsBlockLength) {
-            var followingBlockOfComments = commentLayouts.splice(0, commentsBlockLength);
+            var followingBlockOfComments = decreasingBlockOfComments.splice(0, commentsBlockLength);
             firstBlockOfComments = firstBlockOfComments.concat(followingBlockOfComments);
             bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
-
-          } else if (commentLayouts.length < commentsBlockLength || commentLayouts.length > 0) {
-            followingBlockOfComments = commentLayouts.splice(0, comments.length);
-            firstBlockOfComments = firstBlockOfComments.concat(followingBlockOfComments);
+            followingBlockOfComments = [];
+          } else {
+            var lastBlockOfComments = decreasingBlockOfComments.splice(0, decreasingBlockOfComments.length);
+            firstBlockOfComments = firstBlockOfComments.concat(lastBlockOfComments);
             bigPicture.querySelector('.social__comments').innerHTML = firstBlockOfComments;
             commentsLoader.classList.add('hidden');
           }
         });
-
+      } else {
+        var singleBlockOfComment = commentLayouts;
+        commentsLoader.classList.add('hidden');
+        bigPicture.querySelector('.social__comments').innerHTML = singleBlockOfComment;
       }
-
     },
     // Собирает шаблон картинки с данными
     getPictureTemplate: function (picture) {

@@ -2,7 +2,6 @@
 (function () {
   var ESC_KEY = 'Escape';
   var START_VALUE = 100;
-  var PIN_WIDTH = 18;
   var body = document.querySelector('body');
   var main = document.querySelector('main');
   var form = document.querySelector('.img-upload__form');
@@ -13,13 +12,27 @@
   var effectLevelDepth = document.querySelector('.effect-level__depth');
   var effectLevelValue = document.querySelector('.effect-level__value');
   var value = uploadFile.value;
-  var effectLevelLine = document.querySelector('.effect-level__line');
   var imgUploadPreview = document.querySelector('.img-upload__preview img');
-  var appliedClassName = '';
   var scaleControlSmaller = document.querySelector('.scale__control--smaller');
   var scaleControlBigger = document.querySelector('.scale__control--bigger');
   var scaleControlValue = document.querySelector('.scale__control--value');
   var scaleChangeStep = 25;
+
+  window.form = {
+    // Сопоставляет класс и эффект
+    getEffectDepth: function (className, currentValue) {
+      var stateToEffectDepth = {
+        'effects__preview--chrome': 'grayscale(' + 1 / 100 * currentValue + ')',
+        'effects__preview--sepia': 'sepia(' + 1 / 100 * currentValue + ')',
+        'effects__preview--marvin': 'invert(' + currentValue + '%)',
+        'effects__preview--phobos': 'blur(' + 3 / 100 * currentValue + 'px)',
+        'effects__preview--heat': 'brightness(' + 3 / 100 * currentValue + ')',
+        'effects__preview--none': ''
+      };
+      return stateToEffectDepth[className];
+    },
+    appliedClassName: ''
+  };
 
   // Закрытие по Esc
   var onEscPress = function (evt) {
@@ -61,74 +74,23 @@
     var effectLevelScale = document.querySelector('.img-upload__effect-level');
     effectLevelScale.classList.add('hidden');
 
-    var getEffectDepth = function (className, currentValue) {
-      var stateToEffectDepth = {
-        'effects__preview--chrome': 'grayscale(' + 1 / 100 * currentValue + ')',
-        'effects__preview--sepia': 'sepia(' + 1 / 100 * currentValue + ')',
-        'effects__preview--marvin': 'invert(' + currentValue + '%)',
-        'effects__preview--phobos': 'blur(' + 3 / 100 * currentValue + 'px)',
-        'effects__preview--heat': 'brightness(' + 3 / 100 * currentValue + ')',
-        'effects__preview--none': ''
-      };
-      return stateToEffectDepth[className];
-    };
-    // Описывает перемещение бегунка и изменение эффекта
-    var onMouseDown = function (evt) {
-      evt.preventDefault();
-      var scale = effectLevelLine.offsetWidth;
-      var minX = effectLevelLine.getBoundingClientRect().x + PIN_WIDTH / 2;
-      var maxX = minX + scale - PIN_WIDTH;
-      var startCoordX = evt.clientX;
-
-      var onMouseMove = function (moveEvt) {
-        moveEvt.preventDefault();
-
-        if (moveEvt.clientX >= minX && moveEvt.clientX <= maxX) {
-          var shift = startCoordX - moveEvt.clientX;
-          startCoordX = moveEvt.clientX;
-
-          var changedValue = ((pin.offsetLeft - shift) * 100 / scale);
-          changedValue = changedValue.toFixed(1);
-          if (changedValue > START_VALUE) {
-            changedValue = START_VALUE;
-          } else if (changedValue < 0) {
-            changedValue = 0;
-          }
-          pin.style.left = changedValue + '%';
-          effectLevelDepth.style.width = changedValue + '%';
-          effectLevelValue.setAttribute('value', changedValue);
-          imgUploadPreview.style.filter = getEffectDepth(appliedClassName, changedValue);
-        }
-      };
-
-      var onMouseUp = function (upEvt) {
-        upEvt.preventDefault();
-
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
-      };
-
-      document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
-    };
-
     // Перебирает псевдомассив превью картинок
     var changeEffect = function (effectPreview, addedClass, effectsRadio) {
-      document.addEventListener('click', function (evt) {
+      var onEffectPreviewClick = function (evt) {
         if (evt.target === effectPreview) {
-          pin.removeEventListener('mousedown', onMouseDown);
           effectsRadio.checked = true;
           effectLevelScale.classList.toggle('hidden', effectsRadio.value === 'none');
           imgUploadPreview.removeAttribute('class');
           imgUploadPreview.classList.add(addedClass);
-          appliedClassName = addedClass;
-          imgUploadPreview.style.filter = getEffectDepth(addedClass, START_VALUE);
+          window.form.appliedClassName = addedClass;
+          imgUploadPreview.style.filter = window.form.getEffectDepth(addedClass, START_VALUE);
           pin.style.left = START_VALUE + '%';
           effectLevelDepth.style.width = START_VALUE + '%';
           effectLevelValue.setAttribute('value', START_VALUE);
-          pin.addEventListener('mousedown', onMouseDown);
         }
-      });
+        pin.addEventListener('mousedown', window.slider.onMouseDown);
+      };
+      document.addEventListener('click', onEffectPreviewClick);
     };
 
     // Сопоставляет превью-картинку, класс и радио-кнопку
@@ -173,6 +135,8 @@
     document.removeEventListener('blur', onInputBlur, true);
     scaleControlSmaller.removeEventListener('click', onMinusButtonClick);
     scaleControlBigger.removeEventListener('click', onPlusButtonClick);
+    pin.removeEventListener('mousedown', window.slider.onMouseDown);
+    form.reset();
     body.classList.remove('modal-open');
   };
 
@@ -189,8 +153,8 @@
   // Показывает и убирает сообщение об успехе загрузки
   var showMessageModal = function (message) {
     var template = document.querySelector('#' + message)
-    .content
-    .querySelector('.' + message);
+      .content
+      .querySelector('.' + message);
     var modal = template.cloneNode(true);
     main.insertAdjacentElement('afterbegin', modal);
 

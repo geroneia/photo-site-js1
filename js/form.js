@@ -11,12 +11,20 @@
   var pin = document.querySelector('.effect-level__pin');
   var effectLevelDepth = document.querySelector('.effect-level__depth');
   var effectLevelValue = document.querySelector('.effect-level__value');
-  var value = uploadFile.value;
+  var uploadFilePreview = document.querySelector('.img-upload__preview img');
   var imgUploadPreview = document.querySelector('.img-upload__preview img');
   var scaleControlSmaller = document.querySelector('.scale__control--smaller');
   var scaleControlBigger = document.querySelector('.scale__control--bigger');
   var scaleControlValue = document.querySelector('.scale__control--value');
   var scaleChangeStep = 25;
+
+  var getStartImageParameters = function () {
+    scaleControlValue.setAttribute('value', START_VALUE);
+    imgUploadPreview.style.transform = getTotalScale(START_VALUE);
+    imgUploadPreview.style.filter = '';
+    imgUploadPreview.removeAttribute('class');
+    imgUploadPreview.classList.add('effects__preview--none');
+  };
 
   window.form = {
     // Сопоставляет класс и эффект
@@ -121,13 +129,13 @@
     document.addEventListener('keydown', onEscPress);
     document.addEventListener('focus', onInputFocus, true);
     document.addEventListener('blur', onInputBlur, true);
-    scaleControlValue.setAttribute('value', START_VALUE);
-    imgUploadPreview.style.transform = getTotalScale(START_VALUE);
+    getStartImageParameters();
     scaleControlSmaller.addEventListener('click', onMinusButtonClick);
     scaleControlBigger.addEventListener('click', onPlusButtonClick);
     body.classList.add('modal-open');
   };
 
+  var previousUploadFileUrl = '';
   var closeImgUpload = function () {
     imgUploadOverlay.classList.add('hidden');
     document.removeEventListener('keydown', onEscPress);
@@ -137,17 +145,20 @@
     scaleControlBigger.removeEventListener('click', onPlusButtonClick);
     pin.removeEventListener('mousedown', window.slider.onMouseDown);
     form.reset();
+    previousUploadFileUrl = uploadFilePreview.currentSrc;
     body.classList.remove('modal-open');
   };
 
   uploadFile.addEventListener('change', function () {
-    if (value !== uploadFile.value) {
+    var newUploadFileUrl = uploadFilePreview.currentSrc;
+    if (newUploadFileUrl !== previousUploadFileUrl) {
       openImgUpload();
       applyEffect();
     }
   });
+
   imgUploadCancel.addEventListener('click', function () {
-    closeImgUpload();
+    closeImgUpload(previousUploadFileUrl);
   });
 
   // Показывает и убирает сообщение об успехе загрузки
@@ -189,7 +200,7 @@
   // Отправляет форму
   form.addEventListener('submit', function (evt) {
     window.backend.upload(new FormData(evt.target), onSuccessLoading, onErrorLoading);
-    closeImgUpload();
+    closeImgUpload(previousUploadFileUrl);
     form.reset();
     evt.preventDefault();
   });

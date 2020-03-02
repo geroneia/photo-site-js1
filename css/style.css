@@ -751,7 +751,7 @@ main {
   border-radius: 5px;
 }
 
-.text__hashtags--invalid {
+.text__hashtags:invalid {
   border-color: #e90000;
 }
 

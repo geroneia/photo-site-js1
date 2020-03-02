@@ -2,6 +2,7 @@
 (function () {
   var ESC_KEY = 'Escape';
   var START_VALUE = 100;
+  var SCALE_CHANGE_STEP = 25;
   var body = document.querySelector('body');
   var main = document.querySelector('main');
   var form = document.querySelector('.img-upload__form');
@@ -11,12 +12,11 @@
   var pin = document.querySelector('.effect-level__pin');
   var effectLevelDepth = document.querySelector('.effect-level__depth');
   var effectLevelValue = document.querySelector('.effect-level__value');
-  var uploadFilePreview = document.querySelector('.img-upload__preview img');
   var imgUploadPreview = document.querySelector('.img-upload__preview img');
   var scaleControlSmaller = document.querySelector('.scale__control--smaller');
   var scaleControlBigger = document.querySelector('.scale__control--bigger');
   var scaleControlValue = document.querySelector('.scale__control--value');
-  var scaleChangeStep = 25;
+
 
   var getStartImageParameters = function () {
     scaleControlValue.setAttribute('value', START_VALUE);
@@ -39,7 +39,8 @@
       };
       return stateToEffectDepth[className];
     },
-    appliedClassName: ''
+    appliedClassName: '',
+    previousFileName: ''
   };
 
   // Закрытие по Esc
@@ -58,7 +59,7 @@
   var onPlusButtonClick = function () {
     var currentScale = Number(scaleControlValue.getAttribute('value'));
     if (currentScale < START_VALUE) {
-      currentScale += scaleChangeStep;
+      currentScale += SCALE_CHANGE_STEP;
       scaleControlValue.setAttribute('value', currentScale);
       imgUploadPreview.style.transform = getTotalScale(currentScale);
     }
@@ -66,8 +67,8 @@
 
   var onMinusButtonClick = function () {
     var currentScale = Number(scaleControlValue.getAttribute('value'));
-    if (currentScale > scaleChangeStep) {
-      currentScale -= scaleChangeStep;
+    if (currentScale > SCALE_CHANGE_STEP) {
+      currentScale -= SCALE_CHANGE_STEP;
       scaleControlValue.setAttribute('value', currentScale);
       imgUploadPreview.style.transform = getTotalScale(currentScale);
     }
@@ -134,8 +135,7 @@
     scaleControlBigger.addEventListener('click', onPlusButtonClick);
     body.classList.add('modal-open');
   };
-
-  var previousUploadFileUrl = '';
+  // var previousFileName = '';
   var closeImgUpload = function () {
     imgUploadOverlay.classList.add('hidden');
     document.removeEventListener('keydown', onEscPress);
@@ -144,21 +144,22 @@
     scaleControlSmaller.removeEventListener('click', onMinusButtonClick);
     scaleControlBigger.removeEventListener('click', onPlusButtonClick);
     pin.removeEventListener('mousedown', window.slider.onMouseDown);
+    window.form.previousFileName = window.image.fileName;
     form.reset();
-    previousUploadFileUrl = uploadFilePreview.currentSrc;
     body.classList.remove('modal-open');
+    // debugger
   };
 
   uploadFile.addEventListener('change', function () {
-    var newUploadFileUrl = uploadFilePreview.currentSrc;
-    if (newUploadFileUrl !== previousUploadFileUrl) {
+    if (window.image.fileName !== window.form.previousFileName) {
       openImgUpload();
       applyEffect();
     }
+
   });
 
   imgUploadCancel.addEventListener('click', function () {
-    closeImgUpload(previousUploadFileUrl);
+    closeImgUpload();
   });
 
   // Показывает и убирает сообщение об успехе загрузки
@@ -200,7 +201,7 @@
   // Отправляет форму
   form.addEventListener('submit', function (evt) {
     window.backend.upload(new FormData(evt.target), onSuccessLoading, onErrorLoading);
-    closeImgUpload(previousUploadFileUrl);
+    closeImgUpload();
     form.reset();
     evt.preventDefault();
   });

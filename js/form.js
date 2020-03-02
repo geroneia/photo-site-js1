@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   var ESC_KEY = 'Escape';
+  var ENTER_KEY = 'Enter';
   var START_VALUE = 100;
   var SCALE_CHANGE_STEP = 25;
   var body = document.querySelector('body');
@@ -9,6 +10,7 @@
   var uploadFile = document.querySelector('#upload-file');
   var imgUploadOverlay = document.querySelector('.img-upload__overlay');
   var imgUploadCancel = document.querySelector('#upload-cancel');
+  var effectsList = document.querySelector('.effects__list');
   var pin = document.querySelector('.effect-level__pin');
   var effectLevelDepth = document.querySelector('.effect-level__depth');
   var effectLevelValue = document.querySelector('.effect-level__value');
@@ -39,8 +41,7 @@
       };
       return stateToEffectDepth[className];
     },
-    appliedClassName: '',
-    previousFileName: ''
+    appliedClassName: ''
   };
 
   // Закрытие по Esc
@@ -99,7 +100,29 @@
         }
         pin.addEventListener('mousedown', window.slider.onMouseDown);
       };
+
+      var onEnterPress = function (evt) {
+
+        if (evt.key === ENTER_KEY) {
+          evt.preventDefault();
+          var target = evt.target;
+          var innerImage = target.nextElementSibling.querySelector('.effects__preview');
+          if (innerImage === effectPreview) {
+            effectsRadio.checked = true;
+            effectLevelScale.classList.toggle('hidden', effectsRadio.value === 'none');
+            imgUploadPreview.removeAttribute('class');
+            imgUploadPreview.classList.add(addedClass);
+            window.form.appliedClassName = addedClass;
+            imgUploadPreview.style.filter = window.form.getEffectDepth(addedClass, START_VALUE);
+            pin.style.left = START_VALUE + '%';
+            effectLevelDepth.style.width = START_VALUE + '%';
+            effectLevelValue.setAttribute('value', START_VALUE);
+          }
+        }
+        pin.addEventListener('mousedown', window.slider.onMouseDown);
+      };
       document.addEventListener('click', onEffectPreviewClick);
+      effectsList.addEventListener('keydown', onEnterPress, true);
     };
 
     // Сопоставляет превью-картинку, класс и радио-кнопку
@@ -135,7 +158,8 @@
     scaleControlBigger.addEventListener('click', onPlusButtonClick);
     body.classList.add('modal-open');
   };
-  // var previousFileName = '';
+
+  var previousFileName = '';
   var closeImgUpload = function () {
     imgUploadOverlay.classList.add('hidden');
     document.removeEventListener('keydown', onEscPress);
@@ -144,18 +168,16 @@
     scaleControlSmaller.removeEventListener('click', onMinusButtonClick);
     scaleControlBigger.removeEventListener('click', onPlusButtonClick);
     pin.removeEventListener('mousedown', window.slider.onMouseDown);
-    window.form.previousFileName = window.image.fileName;
+    previousFileName = window.image.fileName;
     form.reset();
     body.classList.remove('modal-open');
-    // debugger
   };
 
   uploadFile.addEventListener('change', function () {
-    if (window.image.fileName !== window.form.previousFileName) {
+    if (window.image.fileName !== previousFileName) {
       openImgUpload();
       applyEffect();
     }
-
   });
 
   imgUploadCancel.addEventListener('click', function () {
@@ -173,11 +195,13 @@
     var closeModal = function () {
       modal.parentNode.removeChild(modal);
     };
+
     var onModalEscPress = function (evt) {
       if (evt.key === ESC_KEY) {
         closeModal();
       }
     };
+
     document.addEventListener('keydown', onModalEscPress);
     document.addEventListener('click', function (evt) {
       document.removeEventListener('keydown', onModalEscPress);

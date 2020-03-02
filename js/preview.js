@@ -31,13 +31,6 @@
       bigPicture.querySelector('.social__caption').textContent = '';
       window.data.allCommentsLayout(picture.comments);
       document.addEventListener('keydown', onEscPress);
-    },
-    hideComments: function () {
-      // Прячет блоки счетчика и загрузки комментов
-      var commentsCounter = document.querySelector('.social__comment-count');
-      commentsCounter.classList.add('hidden');
-      var commentsLoader = document.querySelector('.comments-loader');
-      commentsLoader.classList.add('hidden');
     }
   };
 })();

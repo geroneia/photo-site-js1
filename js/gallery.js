@@ -84,6 +84,7 @@
       return discussedPhoto;
     }
   };
+
   // Запускает формирование галереи при успешной загрузке данных
   var onSuccessLoading = function (data) {
     defaultPhotos = data;

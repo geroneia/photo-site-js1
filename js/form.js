@@ -19,7 +19,7 @@
   var scaleControlBigger = document.querySelector('.scale__control--bigger');
   var scaleControlValue = document.querySelector('.scale__control--value');
 
-
+  // Сбрасывает эффекты при новой загрузке
   var getStartImageParameters = function () {
     scaleControlValue.setAttribute('value', START_VALUE);
     imgUploadPreview.style.transform = getTotalScale(START_VALUE);
@@ -75,8 +75,8 @@
     }
   };
 
+  // Применяет эффект для изображения
   var applyEffect = function () {
-    // Применяет эффект для изображения
     var effectsRadios = document.querySelectorAll('.effects__radio');
     var effectsPreviews = document.querySelectorAll('.effects__preview');
     var effectsNames = ['none', 'chrome', 'sepia', 'marvin', 'phobos', 'heat'];
@@ -102,7 +102,6 @@
       };
 
       var onEnterPress = function (evt) {
-
         if (evt.key === ENTER_KEY) {
           evt.preventDefault();
           var target = evt.target;
@@ -159,7 +158,6 @@
     body.classList.add('modal-open');
   };
 
-  var previousFileName = '';
   var closeImgUpload = function () {
     imgUploadOverlay.classList.add('hidden');
     document.removeEventListener('keydown', onEscPress);
@@ -168,16 +166,14 @@
     scaleControlSmaller.removeEventListener('click', onMinusButtonClick);
     scaleControlBigger.removeEventListener('click', onPlusButtonClick);
     pin.removeEventListener('mousedown', window.slider.onMouseDown);
-    previousFileName = window.image.fileName;
     form.reset();
+    uploadFile.value = '';
     body.classList.remove('modal-open');
   };
 
   uploadFile.addEventListener('change', function () {
-    if (window.image.fileName !== previousFileName) {
-      openImgUpload();
-      applyEffect();
-    }
+    openImgUpload();
+    applyEffect();
   });
 
   imgUploadCancel.addEventListener('click', function () {
@@ -226,7 +222,6 @@
   form.addEventListener('submit', function (evt) {
     window.backend.upload(new FormData(evt.target), onSuccessLoading, onErrorLoading);
     closeImgUpload();
-    form.reset();
     evt.preventDefault();
   });
 })();

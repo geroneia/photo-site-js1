@@ -6,13 +6,10 @@
 
   fileChooser.addEventListener('change', function () {
     var file = fileChooser.files[0];
-    // debugger
-    window.image = {
-      fileName: file.name.toLowerCase()
-    };
+    var fileName = file.name.toLowerCase();
 
     var matches = FILE_TYPES.some(function (it) {
-      return window.image.fileName.endsWith(it);
+      return fileName.endsWith(it);
     });
 
     if (matches) {

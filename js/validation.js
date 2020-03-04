@@ -5,7 +5,6 @@
   var MAX_HASHYAG_COUNT = 5;
   var hashtagsInput = document.querySelector('.text__hashtags');
 
-  // Производит валидацию хэштегов
   // Проверка слов
   var findWrongWord = function (target, tag) {
     if (tag.match(/[^а-яёa-z0-9]+$/i)) {

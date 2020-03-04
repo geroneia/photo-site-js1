@@ -1,11 +1,11 @@
 'use strict';
 (function () {
-  // Находит шаблон
+  var COMMENTS_BLOCK_LENGTH = 5;
   var commentsLoader = document.querySelector('.comments-loader');
   var bigPicture = document.querySelector('.big-picture');
   var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
-  var COMMENTS_BLOCK_LENGTH = 5;
   var socialCommentCount = bigPicture.querySelector('.social__comment-count');
+
   var getCuttedLayouts = function (data) {
     var templates = window.data.getComments(data);
     var layouts = [];
@@ -80,7 +80,6 @@
         var singleBlockOfComment = commentLayouts;
         counter = singleBlockOfComment.length;
         commentsCount = singleBlockOfComment.length;
-        // getCommentsCounter();
         commentsLoader.classList.add('hidden');
         bigPicture.querySelector('.social__comments').innerHTML = singleBlockOfComment;
       }
@@ -89,9 +88,7 @@
 
     // Собирает шаблон картинки с данными
     getPictureTemplate: function (picture) {
-      // клонирует шаблон
       var userPhoto = pictureTemplate.cloneNode(true);
-      // Заполняет шаблон из объекта
       userPhoto.querySelector('.picture__img').src = picture.url;
       userPhoto.querySelector('.picture__likes').textContent = picture.likes;
       userPhoto.querySelector('.picture__comments').textContent = picture.comments.length;

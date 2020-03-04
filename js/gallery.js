@@ -14,7 +14,7 @@
         for (var i = 0; i < images.length; i++) {
           if (images[i].url === id) {
             window.preview.getBigPicture(images[i]);
-            window.preview.hideComments();
+            filter.removeEventListener('click', window.filter.onButtonClick);
             break;
           }
         }
@@ -84,6 +84,7 @@
       return discussedPhoto;
     }
   };
+
   // Запускает формирование галереи при успешной загрузке данных
   var onSuccessLoading = function (data) {
     defaultPhotos = data;

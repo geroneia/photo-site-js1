@@ -7,8 +7,11 @@
   var socialCommentCount = bigPicture.querySelector('.comments-block-count');
   var commentsList = bigPicture.querySelector('.social__comments');
   var commentSample = document.querySelector('.social__comment');
+
+  // Создает template на основе чернового элемента списака из разметки
   var template = commentSample.cloneNode(true);
 
+  // Заполняет шаблон комментария
   var getCommentLayout = function (comment) {
     var commentLayout = template.cloneNode(true);
     commentLayout.querySelector('.social__picture').src = comment.avatar;
@@ -18,6 +21,7 @@
     return commentLayout;
   };
 
+  // Создает фрагмент и помещает его в список комментов
   var appendCommentFragment = function (commentsBlock) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < commentsBlock.length; i++) {
@@ -42,46 +46,49 @@
     // Получает разметку всех комментариев к фотографии
     allCommentsLayout: function (bigPhotoComments) {
       commentsList.innerHTML = '';
+      var step = 0;
       var counter = 0;
-      var allComments = bigPhotoComments;
       var firstBlockOfComments = [];
-      var decreasingBlockOfComments = allComments;
+      // Меняет значение счетчика отображенных комментариев
       var getCommentsCounter = function () {
         socialCommentCount.textContent = counter;
       };
 
       var cuttingComments = function () {
-        if (decreasingBlockOfComments.length > COMMENTS_BLOCK_LENGTH) {
-          var followingBlockOfComments = decreasingBlockOfComments.splice(0, COMMENTS_BLOCK_LENGTH);
+        if (bigPhotoComments.length > step + COMMENTS_BLOCK_LENGTH) {
+          var followingBlockOfComments = bigPhotoComments.slice(step, step + COMMENTS_BLOCK_LENGTH);
           appendCommentFragment(followingBlockOfComments);
           counter += COMMENTS_BLOCK_LENGTH;
           getCommentsCounter();
+          step += COMMENTS_BLOCK_LENGTH;
 
         } else {
-          appendCommentFragment(decreasingBlockOfComments);
-          counter += decreasingBlockOfComments.length;
+          var lastBlockOfComments = bigPhotoComments.slice(step, bigPhotoComments.length + 1);
+          appendCommentFragment(lastBlockOfComments);
+          counter = bigPhotoComments.length;
           getCommentsCounter();
           firstBlockOfComments.length = 0;
           commentsLoader.classList.add('hidden');
           commentsLoader.removeEventListener('click', cuttingComments);
         }
       };
-      // commentsCount = commentLayouts.length;
 
       // Если комментариев больше пяти, отображаются первые пять, показывается кнопка
-      if (allComments.length > COMMENTS_BLOCK_LENGTH) {
+      if (bigPhotoComments.length > COMMENTS_BLOCK_LENGTH) {
         commentsLoader.classList.remove('hidden');
-        firstBlockOfComments = decreasingBlockOfComments.splice(0, COMMENTS_BLOCK_LENGTH);
+        firstBlockOfComments = bigPhotoComments.slice(0, COMMENTS_BLOCK_LENGTH);
         appendCommentFragment(firstBlockOfComments);
         counter = COMMENTS_BLOCK_LENGTH;
         getCommentsCounter();
+        step = COMMENTS_BLOCK_LENGTH;
         commentsLoader.addEventListener('click', cuttingComments);
 
       } else {
-        var singleBlockOfComment = allComments;
+        var singleBlockOfComment = bigPhotoComments;
         appendCommentFragment(singleBlockOfComment);
         counter = singleBlockOfComment.length;
         commentsLoader.classList.add('hidden');
+        getCommentsCounter();
       }
     },
 

@@ -5,6 +5,7 @@
   var StatusCode = {
     OK: 200
   };
+
   window.backend = {
     load: function (onLoad) {
       var xhr = new XMLHttpRequest();

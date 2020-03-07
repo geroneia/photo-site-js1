@@ -5,22 +5,6 @@
   var ENTER_KEY = 'Enter';
   var filter = document.querySelector('.img-filters');
 
-  // Открывает большую фотку по нажатию на Enter
-  var onEnterPress = function (evt) {
-    if (evt.key === ENTER_KEY) {
-      var target = evt.target;
-      if (target.classList.contains('picture')) {
-        var id = target.querySelector('[data-id]').dataset.id;
-        for (var i = 0; i < images.length; i++) {
-          if (images[i].url === id) {
-            window.preview.getBigPicture(images[i]);
-            filter.removeEventListener('click', window.filter.onButtonClick);
-            break;
-          }
-        }
-      }
-    }
-  };
   // Находит место, куда вставятся фотки
   var anotherUserPictures = document.querySelector('.pictures');
 
@@ -28,6 +12,17 @@
   var images = [];
   var photos = [];
   var defaultPhotos = [];
+
+  // Сопоставляет превью и большую картинку и открывает соответствующую
+  var imageMatching = function (id) {
+    for (var i = 0; i < images.length; i++) {
+      if (images[i].url === id) {
+        window.preview.getBigPicture(images[i]);
+        filter.removeEventListener('click', window.filter.onButtonClick);
+        break;
+      }
+    }
+  };
 
   // Собирает шаблон фото
   window.gallery = {
@@ -82,6 +77,23 @@
       });
       discussedPhoto.slice(0, PHOTOS_COUNT);
       return discussedPhoto;
+    },
+    onPreviewClick: function (evt) {
+      var target = evt.target;
+      if (target.classList.contains('picture__img')) {
+        var id = target.dataset.id;
+        imageMatching(id);
+      }
+    },
+    // Открывает большую фотку по нажатию на Enter
+    onEnterPress: function (evt) {
+      if (evt.key === ENTER_KEY) {
+        var target = evt.target;
+        if (target.classList.contains('picture')) {
+          var id = target.querySelector('[data-id]').dataset.id;
+          imageMatching(id);
+        }
+      }
     }
   };
 
@@ -97,18 +109,6 @@
   window.backend.load(onSuccessLoading);
 
   // Загружает большую фотку при клике на превью
-  document.addEventListener('click', function (evt) {
-    var target = evt.target;
-    if (target.classList.contains('picture__img')) {
-      var id = target.dataset.id;
-      for (var i = 0; i < images.length; i++) {
-        if (images[i].url === id) {
-          window.preview.getBigPicture(images[i]);
-          filter.removeEventListener('click', window.filter.onButtonClick);
-          break;
-        }
-      }
-    }
-  });
-  document.addEventListener('keydown', onEnterPress);
+  document.addEventListener('click', window.gallery.onPreviewClick);
+  document.addEventListener('keydown', window.gallery.onEnterPress);
 })();

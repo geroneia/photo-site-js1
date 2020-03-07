@@ -1,5 +1,8 @@
 'use strict';
 (function () {
+  var FILTER_DEFAULT = 'filter-default';
+  var FILTER_RANDOM = 'filter-random';
+  var FILTER_DISCUSSED = 'filter-discussed';
   var filter = document.querySelector('.img-filters');
   var buttons = filter.querySelectorAll('.img-filters__button');
 
@@ -16,11 +19,11 @@
         }
         target.classList.add('img-filters__button--active');
       }
-      if (id === 'filter-default') {
+      if (id === FILTER_DEFAULT) {
         window.gallery.renderPhotos(window.gallery.getDefaultPhotos());
-      } else if (id === 'filter-random') {
+      } else if (id === FILTER_RANDOM) {
         window.gallery.renderPhotos(window.gallery.getUniqueRandomPhotos());
-      } else if (id === 'filter-discussed') {
+      } else if (id === FILTER_DISCUSSED) {
         window.gallery.renderPhotos(window.gallery.getDiscussedPhoto());
       }
     })

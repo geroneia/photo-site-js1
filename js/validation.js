@@ -3,11 +3,12 @@
   var MIN_HASHTAG_LENGTH = 2;
   var MAX_HASHTAG_LENGTH = 20;
   var MAX_HASHYAG_COUNT = 5;
+  var REGULAR_EXPRESSION = /[^а-яёa-z0-9]+$/i;
   var hashtagsInput = document.querySelector('.text__hashtags');
 
   // Проверка слов
   var findWrongWord = function (target, tag) {
-    if (tag.match(/[^а-яёa-z0-9]+$/i)) {
+    if (tag.match(REGULAR_EXPRESSION)) {
       target.setCustomValidity(
           'Хэш-тег должен состоять только из букв и чисел'
       );

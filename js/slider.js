@@ -1,6 +1,9 @@
 'use strict';
 (function () {
   var START_VALUE = 100;
+  var MAXIMUM_PERCENTAGE = 100;
+  var MINIMUM_PERCENTAGE = 0;
+  var SIMBOLS_AFTER_COMMA_COUNT = 1;
   var effectLevelLine = document.querySelector('.effect-level__line');
   var pin = document.querySelector('.effect-level__pin');
   var effectLevelDepth = document.querySelector('.effect-level__depth');
@@ -20,12 +23,12 @@
         var shift = startCoordX - moveEvt.clientX;
         startCoordX = moveEvt.clientX;
 
-        var changedValue = ((pin.offsetLeft - shift) * 100 / scale);
-        changedValue = changedValue.toFixed(1);
+        var changedValue = ((pin.offsetLeft - shift) * MAXIMUM_PERCENTAGE / scale);
+        changedValue = changedValue.toFixed(SIMBOLS_AFTER_COMMA_COUNT);
         if (changedValue > START_VALUE) {
           changedValue = START_VALUE;
-        } else if (changedValue < 0) {
-          changedValue = 0;
+        } else if (changedValue < MINIMUM_PERCENTAGE) {
+          changedValue = MINIMUM_PERCENTAGE;
         }
         pin.style.left = changedValue + '%';
         effectLevelDepth.style.width = changedValue + '%';

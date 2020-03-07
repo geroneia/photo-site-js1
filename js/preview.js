@@ -17,6 +17,8 @@
     document.removeEventListener('keydown', onEscPress);
     filter.addEventListener('click', window.filter.onButtonClick);
     body.classList.remove('modal-open');
+    document.addEventListener('click', window.gallery.onPreviewClick);
+    document.addEventListener('keydown', window.gallery.onEnterPress);
   };
   cancelButton.addEventListener('click', function () {
     closePreview();
@@ -32,6 +34,8 @@
       bigPicture.querySelector('.comments-count').textContent = picture.comments.length;
       window.data.allCommentsLayout(picture.comments);
       document.addEventListener('keydown', onEscPress);
+      document.removeEventListener('click', window.gallery.onPreviewClick);
+      document.removeEventListener('keydown', window.gallery.onEnterPress);
     }
   };
 })();

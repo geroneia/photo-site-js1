@@ -4,6 +4,11 @@
   var ENTER_KEY = 'Enter';
   var START_VALUE = 100;
   var SCALE_CHANGE_STEP = 25;
+  var MAXIMUM_PERCENTAGE = 100;
+  var MAXIMUM_GRAYSCALE_DEPTH = 1;
+  var MAXIMUM_SEPIA_DEPTH = 1;
+  var MAXIMUM_BLUR_DEPTH = 3;
+  var MAXIMUM_BRIGHTNESS_DEPTH = 3;
   var body = document.querySelector('body');
   var main = document.querySelector('main');
   var form = document.querySelector('.img-upload__form');
@@ -32,11 +37,11 @@
     // Сопоставляет класс и эффект
     getEffectDepth: function (className, currentValue) {
       var stateToEffectDepth = {
-        'effects__preview--chrome': 'grayscale(' + 1 / 100 * currentValue + ')',
-        'effects__preview--sepia': 'sepia(' + 1 / 100 * currentValue + ')',
+        'effects__preview--chrome': 'grayscale(' + MAXIMUM_GRAYSCALE_DEPTH / MAXIMUM_PERCENTAGE * currentValue + ')',
+        'effects__preview--sepia': 'sepia(' + MAXIMUM_SEPIA_DEPTH / MAXIMUM_PERCENTAGE * currentValue + ')',
         'effects__preview--marvin': 'invert(' + currentValue + '%)',
-        'effects__preview--phobos': 'blur(' + 3 / 100 * currentValue + 'px)',
-        'effects__preview--heat': 'brightness(' + 3 / 100 * currentValue + ')',
+        'effects__preview--phobos': 'blur(' + MAXIMUM_BLUR_DEPTH / MAXIMUM_PERCENTAGE * currentValue + 'px)',
+        'effects__preview--heat': 'brightness(' + MAXIMUM_BRIGHTNESS_DEPTH / MAXIMUM_PERCENTAGE * currentValue + ')',
         'effects__preview--none': ''
       };
       return stateToEffectDepth[className];
@@ -53,16 +58,20 @@
 
   // Меняет масштаб
   var getTotalScale = function (number) {
-    var scale = 'scale(' + number / 100 + ')';
+    var scale = 'scale(' + number / MAXIMUM_PERCENTAGE + ')';
     return scale;
+  };
+
+  var changeScale = function (scale) {
+    scaleControlValue.setAttribute('value', scale);
+    imgUploadPreview.style.transform = getTotalScale(scale);
   };
 
   var onPlusButtonClick = function () {
     var currentScale = Number(scaleControlValue.getAttribute('value'));
     if (currentScale < START_VALUE) {
       currentScale += SCALE_CHANGE_STEP;
-      scaleControlValue.setAttribute('value', currentScale);
-      imgUploadPreview.style.transform = getTotalScale(currentScale);
+      changeScale(currentScale);
     }
   };
 
@@ -70,8 +79,7 @@
     var currentScale = Number(scaleControlValue.getAttribute('value'));
     if (currentScale > SCALE_CHANGE_STEP) {
       currentScale -= SCALE_CHANGE_STEP;
-      scaleControlValue.setAttribute('value', currentScale);
-      imgUploadPreview.style.transform = getTotalScale(currentScale);
+      changeScale(currentScale);
     }
   };
 
@@ -86,17 +94,20 @@
 
     // Перебирает псевдомассив превью картинок
     var changeEffect = function (effectPreview, addedClass, effectsRadio) {
+      var setFilter = function () {
+        effectsRadio.checked = true;
+        effectLevelScale.classList.toggle('hidden', effectsRadio.value === 'none');
+        imgUploadPreview.removeAttribute('class');
+        imgUploadPreview.classList.add(addedClass);
+        window.form.appliedClassName = addedClass;
+        imgUploadPreview.style.filter = window.form.getEffectDepth(addedClass, START_VALUE);
+        pin.style.left = START_VALUE + '%';
+        effectLevelDepth.style.width = START_VALUE + '%';
+        effectLevelValue.setAttribute('value', START_VALUE);
+      };
       var onEffectPreviewClick = function (evt) {
         if (evt.target === effectPreview) {
-          effectsRadio.checked = true;
-          effectLevelScale.classList.toggle('hidden', effectsRadio.value === 'none');
-          imgUploadPreview.removeAttribute('class');
-          imgUploadPreview.classList.add(addedClass);
-          window.form.appliedClassName = addedClass;
-          imgUploadPreview.style.filter = window.form.getEffectDepth(addedClass, START_VALUE);
-          pin.style.left = START_VALUE + '%';
-          effectLevelDepth.style.width = START_VALUE + '%';
-          effectLevelValue.setAttribute('value', START_VALUE);
+          setFilter();
         }
         pin.addEventListener('mousedown', window.slider.onMouseDown);
       };
@@ -107,15 +118,7 @@
           var target = evt.target;
           var innerImage = target.nextElementSibling.querySelector('.effects__preview');
           if (innerImage === effectPreview) {
-            effectsRadio.checked = true;
-            effectLevelScale.classList.toggle('hidden', effectsRadio.value === 'none');
-            imgUploadPreview.removeAttribute('class');
-            imgUploadPreview.classList.add(addedClass);
-            window.form.appliedClassName = addedClass;
-            imgUploadPreview.style.filter = window.form.getEffectDepth(addedClass, START_VALUE);
-            pin.style.left = START_VALUE + '%';
-            effectLevelDepth.style.width = START_VALUE + '%';
-            effectLevelValue.setAttribute('value', START_VALUE);
+            setFilter();
           }
         }
         pin.addEventListener('mousedown', window.slider.onMouseDown);
@@ -155,6 +158,8 @@
     getStartImageParameters();
     scaleControlSmaller.addEventListener('click', onMinusButtonClick);
     scaleControlBigger.addEventListener('click', onPlusButtonClick);
+    document.removeEventListener('click', window.gallery.onPreviewClick);
+    document.removeEventListener('keydown', window.gallery.onEnterPress);
     body.classList.add('modal-open');
   };
 
@@ -168,6 +173,8 @@
     pin.removeEventListener('mousedown', window.slider.onMouseDown);
     form.reset();
     uploadFile.value = '';
+    document.addEventListener('click', window.gallery.onPreviewClick);
+    document.addEventListener('keydown', window.gallery.onEnterPress);
     body.classList.remove('modal-open');
   };
 
@@ -195,19 +202,22 @@
     var onModalEscPress = function (evt) {
       if (evt.key === ESC_KEY) {
         closeModal();
+        document.removeEventListener('click', onModalButtonClick);
+        document.removeEventListener('keydown', onModalEscPress);
+      }
+    };
+
+    var onModalButtonClick = function (evt) {
+      document.removeEventListener('keydown', onModalEscPress);
+      var target = evt.target;
+      if (target.classList.contains(message) || target.classList.contains(message + '__button')) {
+        closeModal();
+        document.removeEventListener('click', onModalButtonClick);
       }
     };
 
     document.addEventListener('keydown', onModalEscPress);
-    document.addEventListener('click', function (evt) {
-      document.removeEventListener('keydown', onModalEscPress);
-      var target = evt.target;
-      if (target.classList.contains(message)) {
-        closeModal();
-      } else if (target.classList.contains(message + '__button')) {
-        closeModal();
-      }
-    });
+    document.addEventListener('click', onModalButtonClick);
   };
 
   var onSuccessLoading = function () {

@@ -1,7 +1,7 @@
 'use strict';
 (function () {
-  var LOAD_URL = 'https://javascript.pages.academy/kekstagram/data';
-  var UPLOAD_URL = 'https://javascript.pages.academy/kekstagram';
+  var LOAD_URL = 'http://localhost:3000/data';
+  var UPLOAD_URL = 'http://localhost:3000';
   var METHOD_GET = 'GET';
   var METHOD_POST = 'POST';
   var StatusCode = {
